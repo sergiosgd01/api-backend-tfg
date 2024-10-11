@@ -1,37 +1,45 @@
-const users = require('../data/users.json');  
+const User = require('../model/user')
 
-// Obtener todos los usuarios
-const getUsers = (req, res) => {
-  res.status(200).json(users);  
-};
-
-const loginUser = (req, res) => {
-  const { email, password } = req.query;
-
-  const user = users.find(user => user.email === email && user.password === password);
-
-  if (user) {
-    res.status(200).json({ success: true, usuario: user });
-  } else {
-    res.status(401).json({ success: false, message: 'Credenciales incorrectas' });
+const getUsers = async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).send(error);
   }
 };
 
-const registerUser = (req, res) => {
+const loginUser = async (req, res) => {
+  const { email, password } = req.query;
+
   try {
-    const { username, email, password } = req.body;
+    const user = await User.findOne({ email, password });
+    
+    if (user) {
+      return res.status(200).json({ success: true, usuario: user });
+    }
 
-    const userExists = users.find(user => user.email === email);
+    res.status(401).json({ success: false, message: 'Credenciales incorrectas' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Ocurrió un error al buscar el usuario' });
+  }
+};
 
-    if (userExists) {
+const registerUser = async (req, res) => {
+  const { username, email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (user) {
       return res.status(409).json({ success: false, message: 'El correo electrónico ya está registrado' });
     }
 
-    const newUser = { username, email, password };
-    users.push(newUser);
+    const newUser = new User({ username, email, password, admin: 0 });
+    await newUser.save();
 
     res.status(201).json({ success: true, user: newUser });
-  } catch (error) {
+  } catch (err) {
     res.status(500).json({ success: false, message: 'Ocurrió un error al registrar el usuario' });
   }
 };

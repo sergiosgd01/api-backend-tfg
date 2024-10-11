@@ -1,10 +1,10 @@
-const location = require('../data/locations.json'); 
+const Location = require('../model/location'); 
 
-const getLocation = (req, res) => {
+const getLocation = async (req, res) => {
   const code = Number(req.params.code);
 
   try {
-    const locations = location.filter(location => location.code === code);
+    const locations = await Location.find({ code }); 
 
     if (locations.length > 0) {
       res.status(200).json(locations);

@@ -1,10 +1,10 @@
-const route = require('../data/routes.json'); 
+const Route = require('../model/route'); 
 
-const getRoute = (req, res) => {
+const getRoute = async (req, res) => {
   const code = Number(req.params.code);
 
   try {
-    const routes = route.filter(route => route.code === code);
+    const routes = await Route.find({ code }); 
 
     if (routes.length > 0) {
       res.status(200).json(routes);

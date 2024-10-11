@@ -1,14 +1,13 @@
-const serviceTypes = require('../data/serviceTypes.json'); 
+const ServiceType = require('../model/serviceType'); 
 
-const getServiceTypes = (req, res) => {
-
+const getServiceTypes = async (req, res) => {
   try {
-    const types = serviceTypes;
+    const types = await ServiceType.find({}); 
 
     if (types.length > 0) {
       res.status(200).json(types);
     } else {
-      res.status(404).json({ message: 'No se encontraron los tipos servicios.' });
+      res.status(404).json({ message: 'No se encontraron los tipos de servicios.' });
     }
   } catch (error) {
     console.error('Error al obtener los tipos de servicios:', error);

@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+require('../mongo')
 
 const userRoutes = require('./routes/user');
 const eventRoutes = require('./routes/event');
@@ -9,8 +10,8 @@ const serviceRoutes = require('./routes/service');
 const serviceTypesRoutes = require('./routes/serviceTypes');
 
 const app = express();
-app.use(cors());  
 
+app.use(cors());  
 app.use(express.json());  
 
 app.use('/api/user', userRoutes);

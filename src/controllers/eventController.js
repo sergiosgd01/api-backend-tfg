@@ -1,19 +1,27 @@
-const events = require('../data/events.json'); 
+const Event = require('../model/event'); 
 
-// Función para obtener todos los eventos
-const getEvents = (req, res) => {
-  res.status(200).json(events);
+const getEvents = async (req, res) => {
+  try {
+    const events = await Event.find({});
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener los eventos', error });
+  }
 };
 
-// Función para obtener un evento por code
-const getEventById = (req, res) => {
-  const { code } = req.params; 
-  const event = events.find(event => event.code === Number(code)); 
+const getEventById = async (req, res) => {
+  const { code } = req.params;
 
-  if (event) {
-    res.status(200).json(event); 
-  } else {
-    res.status(404).json({ message: 'Evento no encontrado.' }); 
+  try {
+    const event = await Event.findOne({ code: Number(code) }); 
+
+    if (event) {
+      res.status(200).json(event);
+    } else {
+      res.status(404).json({ message: 'Evento no encontrado.' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener el evento', error });
   }
 };
 

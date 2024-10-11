@@ -1,10 +1,10 @@
-const service = require('../data/services.json'); 
+const Service = require('../model/service'); 
 
-const getService = (req, res) => {
+const getService = async (req, res) => {
   const code = Number(req.params.code);
 
   try {
-    const services = service.filter(service => service.code === code);
+    const services = await Service.find({ code }); 
 
     if (services.length > 0) {
       res.status(200).json(services);
