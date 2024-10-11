@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "code": 7,
+    "name": "Cabalgata de Reyes",
+    "province": "Cáceres",
+    "time_distance": "40-0",
+    "multiuser": 0,
+    "status": 0,
+    "cancelledInfo": null,
+    "startDate": "2024-01-06 10:12:16",
+    "endDate": "2026-01-06 14:12:16",
+    "image": "https://pruebaproyectouex.000webhostapp.com/proyectoTFG/imagenes/eventos_imagenes/CabalgataCaceres.jpg",
+    "qrCode": "https://pruebaproyectouex.000webhostapp.com/proyectoTFG/imagenes/QRCode/eventCode=7.png",
+    "organizationCode": 5401198
+  },
+  {
+    "id": 2,
+    "code": 3,
+    "name": "Maratón de Cáceres",
+    "province": "Cáceres",
+    "time_distance": "40-0",
+    "multiuser": 1,
+    "status": 0,
+    "cancelledInfo": null,
+    "startDate": "2024-01-06 10:12:16",
+    "endDate": "2026-01-06 14:12:16",
+    "image": "https://pruebaproyectouex.000webhostapp.com/proyectoTFG/imagenes/eventos_imagenes/MaratonCaceres.jpg",
+    "qrCode": "https://pruebaproyectouex.000webhostapp.com/proyectoTFG/imagenes/QRCode/eventCode=3.png",
+    "organizationCode": 5401198
+  }
+]
