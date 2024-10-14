@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const serviceTypeSchema = new mongoose.Schema({
-  id: Number,
+  type: Number,
   name: String,
   image: String
 })

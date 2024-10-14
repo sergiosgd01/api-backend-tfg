@@ -1,5 +1,4 @@
 const Service = require('../model/service'); 
-const { ObjectId } = require('mongodb');
 
 const getService = async (req, res) => {
   const code = Number(req.params.code);
@@ -10,7 +9,7 @@ const getService = async (req, res) => {
     if (services.length > 0) {
       res.status(200).json(services);
     } else {
-      res.status(404).json({ message: 'No se encontraron marcadores de los servicios.' });
+      res.status(200).json({ message: 'No se encontraron servicios para este código', services: [] });
     }
   } catch (error) {
     console.error('Error al obtener los marcadores de los servicios:', error);
@@ -21,15 +20,8 @@ const getService = async (req, res) => {
 const deleteService = async (req, res) => { 
   const id = req.params.id;
 
-  console.log('id:', id);
-
-  // Verifica si el _id es un ObjectId válido
-  // if (!ObjectId.isValid(_id)) {
-  //   return res.status(400).json({ message: 'ID inválido.' });
-  // }
-
   try {
-    const service = await Service.findByIdAndRemove(id);
+    const service = await Service.findByIdAndDelete(id);
 
     if (service) {
       res.status(200).json({ message: 'Servicio eliminado correctamente.', service });

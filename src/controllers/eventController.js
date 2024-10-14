@@ -26,7 +26,7 @@ const getEventById = async (req, res) => {
 };
 
 const changeStatusEvent = async (req, res) => {
-  const { code } = req.params;
+  const { id } = req.params;
   const { action, cancelledInfo } = req.body;
 
   if (action === undefined || cancelledInfo === undefined) {
@@ -34,7 +34,7 @@ const changeStatusEvent = async (req, res) => {
   }
 
   try {
-    const event = await Event.findOne({ code: Number(code) });
+    const event = await Event.findOne({_id: id});
 
     if (event) {
       event.status = action;
@@ -47,6 +47,55 @@ const changeStatusEvent = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: 'Error al cancelar el evento', error });
+  }
+};
+
+const updateNameEvent = async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+
+  if (name === undefined) {
+    return res.status(400).json({ message: 'Faltan parámetros: name es obligatorio.' });
+  }
+
+  try {
+    const event = await Event.findOne({_id: id});
+
+    if (event) {
+      event.name = name;
+      await event.save();
+
+      res.status(200).json({ message: 'Nombre del evento actualizado correctamente.' });
+    } else {
+      res.status(404).json({ message: 'Evento no encontrado.' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error al actualizar nombre del evento', error });
+  }
+};
+
+const updateDateEvent = async (req, res) => {
+  const { id } = req.params;
+  const { startDate, endDate } = req.body;
+
+  if (!startDate || !endDate) {
+    return res.status(400).json({ message: 'Faltan parámetros: startDate y endDate son obligatorios.' });
+  }
+
+  try {
+    const event = await Event.findOne({_id: id});
+
+    if (event) {
+      event.startDate = new Date(startDate).toISOString().replace('Z', '-01:00');
+      event.endDate = new Date(endDate).toISOString().replace('Z', '-01:00');
+      await event.save();
+
+      res.status(200).json({ message: 'La fecha del evento actualizado correctamente.' });
+    } else {
+      res.status(404).json({ message: 'Evento no encontrado.' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error al actualizar la fecha del evento', error });
   }
 };
 
@@ -70,5 +119,7 @@ module.exports = {
   getEvents,
   getEventById,
   changeStatusEvent,
+  updateNameEvent,
+  updateDateEvent,
   getEventQRCode,
 };
