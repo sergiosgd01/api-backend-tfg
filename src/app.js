@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
 require('../mongo')
 
 const userRoutes = require('./routes/user');

@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
-const { password } = require('./password'); 
 
-const encodedPassword = encodeURIComponent(password);
+const encodedPassword = encodeURIComponent(process.env.MONGO_PASSWORD);
 
 const connectionString = `mongodb+srv://sergiosgd2001:${encodedPassword}@cluster.vqj6e.mongodb.net/?retryWrites=true&w=majority&appName=Cluster`
 
