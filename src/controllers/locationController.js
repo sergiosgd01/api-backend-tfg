@@ -36,8 +36,7 @@ const verifyDeviceId = async (req, res) => {
 
   try {
     const location = await Location.findOne({ deviceID, code });
-    console.log('11', location.deviceID);
-    console.log('22', deviceID);
+    
     if (location) {
       return res.status(200).json({ success: true, location: location });
     }
