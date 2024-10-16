@@ -6,11 +6,8 @@ const getLocation = async (req, res) => {
   try {
     const locations = await Location.find({ code }); 
 
-    if (locations.length > 0) {
-      res.status(200).json(locations);
-    } else {
-      res.status(404).json({ message: 'No se encontraron marcadores de ubicación.' });
-    }
+    res.status(200).json(locations);
+    
   } catch (error) {
     console.error('Error al obtener los marcadores de ubicación:', error);
     res.status(500).json({ message: 'Error interno del servidor.' });
