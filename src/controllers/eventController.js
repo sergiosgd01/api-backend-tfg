@@ -106,7 +106,7 @@ const getEventQRCode = async (req, res) => {
     const event = await Event.findOne({ qrCode });
 
     if (event) {
-      es.status(200).json(event);
+      res.status(200).json(event);
     } else {
       res.status(404).json({ message: 'Evento no encontrado.' });
     }
