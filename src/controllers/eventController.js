@@ -25,6 +25,39 @@ const getEventById = async (req, res) => {
   }
 };
 
+const createEvent = async (req, res) => {
+  const { code, name, province, time_distance, multiuser, status, startDate, endDate, organizationCode } = req.body;
+
+  if (!code || !name || !province || !time_distance || !multiuser || !status || !startDate || !endDate || !organizationCode) {
+    return res.status(400).json({ message: 'Faltan parámetros obligatorios' });
+  }
+
+  try {
+    const newEvent = new Event({
+      code,
+      name,
+      province, 
+      time_distance, 
+      multiuser, 
+      status, 
+      startDate: new Date(startDate).toISOString().replace('Z', '-01:00'),
+      endDate: new Date(endDate).toISOString().replace('Z', '-01:00'),
+      organizationCode, 
+      image: '',
+      qrCode: '',
+      status: 0,  
+      cancelledInfo: '',
+    });
+
+    // Guardar el evento en la base de datos
+    await newEvent.save();
+
+    res.status(201).json({ message: 'Evento creado exitosamente.', event: newEvent });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al crear el evento', error });
+  }
+};
+
 const changeStatusEvent = async (req, res) => {
   const { id } = req.params;
   const { action, cancelledInfo } = req.body;
@@ -122,4 +155,5 @@ module.exports = {
   updateNameEvent,
   updateDateEvent,
   getEventQRCode,
+  createEvent
 };
