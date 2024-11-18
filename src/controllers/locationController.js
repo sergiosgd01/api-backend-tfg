@@ -28,24 +28,6 @@ const insertLocation = async (req, res) => {
   }
 };
 
-const createLocation = async (req, res) => {
-  const { code, latitude, longitude } = req.body;
-  
-  if (!code || !latitude || !longitude) {
-    return res.status(400).json({ message: 'Faltan datos obligatorios para insertar el punto de la location.' });
-  }
-
-  try {
-    const location = new Location({ code, latitude, longitude });
-    await location.save();
-
-    res.status(201).json(latitudeocation);
-  } catch (error) {
-    console.error('Error al crear el punto de la location:', error);
-    res.status(500).json({ message: 'Error interno del servidor.' });
-  }
-}
-
 const verifyDeviceId = async (req, res) => {
   const { deviceID, code } = req.query;
 
@@ -82,6 +64,5 @@ module.exports = {
   getLocation,
   insertLocation,
   verifyDeviceId,
-  getLocationDorsal,
-  createLocation
+  getLocationDorsal
 };
