@@ -28,6 +28,23 @@ const insertLocation = async (req, res) => {
   }
 };
 
+const deleteLocation = async (req, res) => { 
+  const id = req.params.id;
+
+  try {
+    const location = await Location.findByIdAndDelete(id);
+
+    if (location) {
+      res.status(200).json({ message: 'Punto de las ubicaciones eliminado correctamente.', location });
+    } else {
+      res.status(404).json({ message: 'No se encontró el punto de las ubicaciones.' });
+    }
+  } catch (error) {
+    console.error('Error al eliminar el punto de las ubicaciones:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+  }
+}
+
 const verifyDeviceId = async (req, res) => {
   const { deviceID, code } = req.query;
 
@@ -64,5 +81,6 @@ module.exports = {
   getLocation,
   insertLocation,
   verifyDeviceId,
-  getLocationDorsal
+  getLocationDorsal, 
+  deleteLocation
 };
