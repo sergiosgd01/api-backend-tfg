@@ -49,7 +49,6 @@ const createEvent = async (req, res) => {
       cancelledInfo: '',
     });
 
-    // Guardar el evento en la base de datos
     await newEvent.save();
 
     res.status(201).json({ message: 'Evento creado exitosamente.', event: newEvent });
