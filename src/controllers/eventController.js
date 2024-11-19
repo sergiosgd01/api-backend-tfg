@@ -45,8 +45,8 @@ const createEvent = async (req, res) => {
       organizationCode, 
       image: '',
       qrCode: '',
-      status: 0,  
-      cancelledInfo: '',
+      status,  
+      cancelledInfo,
     });
 
     await newEvent.save();
