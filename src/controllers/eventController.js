@@ -26,7 +26,7 @@ const getEventById = async (req, res) => {
 };
 
 const createEvent = async (req, res) => {
-  const { code, name, province, time_distance, multiuser, status, startDate, endDate, organizationCode } = req.body;
+  const { code, name, province, time_distance, multiuser, status, cancelledInfo, startDate, endDate, organizationCode } = req.body;
 
   if (
     code === undefined ||
@@ -35,6 +35,7 @@ const createEvent = async (req, res) => {
     time_distance === undefined ||
     multiuser === undefined ||
     status === undefined ||
+    cancelledInfo === undefined ||
     startDate === undefined ||
     endDate === undefined ||
     organizationCode === undefined
@@ -50,20 +51,22 @@ const createEvent = async (req, res) => {
       time_distance, 
       multiuser, 
       status, 
+      cancelledInfo,
       startDate: new Date(startDate).toISOString().replace('Z', '-01:00'),
       endDate: new Date(endDate).toISOString().replace('Z', '-01:00'),
       organizationCode, 
       image: '',
       qrCode: '',
-      status,  
-      cancelledInfo,
     });
+
+    console.log("Datos del evento:", eventData);
 
     await newEvent.save();
 
     res.status(201).json({ message: 'Evento creado exitosamente.', event: newEvent });
   } catch (error) {
-    res.status(500).json({ message: 'Error al crear el evento', error });
+    console.error("Error al crear el evento:", error);
+    res.status(500).json({ message: 'Error al crear el evento', error: error.message || error });
   }
 };
 
