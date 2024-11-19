@@ -42,7 +42,6 @@ const createEvent = async (req, res) => {
     return res.status(400).json({ message: 'Faltan parámetros obligatorios' });
   }
   
-
   try {
     const newEvent = new Event({
       code,
