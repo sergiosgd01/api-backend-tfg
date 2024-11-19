@@ -28,9 +28,20 @@ const getEventById = async (req, res) => {
 const createEvent = async (req, res) => {
   const { code, name, province, time_distance, multiuser, status, startDate, endDate, organizationCode } = req.body;
 
-  if (!code || !name || !province || !time_distance || !multiuser || !status || !startDate || !endDate || !organizationCode) {
+  if (
+    code === undefined ||
+    name === undefined ||
+    province === undefined ||
+    time_distance === undefined ||
+    multiuser === undefined ||
+    status === undefined ||
+    startDate === undefined ||
+    endDate === undefined ||
+    organizationCode === undefined
+  ) {
     return res.status(400).json({ message: 'Faltan parámetros obligatorios' });
   }
+  
 
   try {
     const newEvent = new Event({
