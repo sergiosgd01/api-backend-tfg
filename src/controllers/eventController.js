@@ -59,7 +59,7 @@ const createEvent = async (req, res) => {
       qrCode: '',
     });
 
-    console.log("Datos del evento:", eventData);
+    console.log("Datos del evento:", newEvent);
 
     await newEvent.save();
 
