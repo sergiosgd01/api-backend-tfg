@@ -69,7 +69,7 @@ const createEvent = async (req, res) => {
 };
 
 const editEvent = async (req, res) => {
-  const { id } = req.params; // Asume que el ID del evento se pasa como parámetro en la URL
+  const { id } = req.params; 
   const { 
     code, 
     name, 
@@ -83,7 +83,6 @@ const editEvent = async (req, res) => {
     organizationCode 
   } = req.body;
 
-  // Validación: verifica si se pasó al menos un campo para actualizar
   if (
     !code && 
     !name && 
@@ -100,13 +99,11 @@ const editEvent = async (req, res) => {
   }
 
   try {
-    // Busca el evento por ID
     const event = await Event.findById(id);
     if (!event) {
       return res.status(404).json({ message: 'Evento no encontrado.' });
     }
 
-    // Actualiza los campos que se pasaron en el cuerpo de la solicitud
     if (code !== undefined) event.code = code;
     if (name !== undefined) event.name = name;
     if (province !== undefined) event.province = province;
@@ -118,7 +115,6 @@ const editEvent = async (req, res) => {
     if (endDate !== undefined) event.endDate = new Date(endDate).toISOString().replace('Z', '-01:00');
     if (organizationCode !== undefined) event.organizationCode = organizationCode;
 
-    // Guarda los cambios en la base de datos
     await event.save();
 
     res.status(200).json({ message: 'Evento actualizado exitosamente.', event });
@@ -127,7 +123,6 @@ const editEvent = async (req, res) => {
     res.status(500).json({ message: 'Error al actualizar el evento', error: error.message || error });
   }
 };
-
 
 const changeStatusEvent = async (req, res) => {
   const { id } = req.params;
@@ -154,55 +149,6 @@ const changeStatusEvent = async (req, res) => {
   }
 };
 
-const updateNameEvent = async (req, res) => {
-  const { id } = req.params;
-  const { name } = req.body;
-
-  if (name === undefined) {
-    return res.status(400).json({ message: 'Faltan parámetros: name es obligatorio.' });
-  }
-
-  try {
-    const event = await Event.findOne({_id: id});
-
-    if (event) {
-      event.name = name;
-      await event.save();
-
-      res.status(200).json({ message: 'Nombre del evento actualizado correctamente.' });
-    } else {
-      res.status(404).json({ message: 'Evento no encontrado.' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Error al actualizar nombre del evento', error });
-  }
-};
-
-const updateDateEvent = async (req, res) => {
-  const { id } = req.params;
-  const { startDate, endDate } = req.body;
-
-  if (!startDate || !endDate) {
-    return res.status(400).json({ message: 'Faltan parámetros: startDate y endDate son obligatorios.' });
-  }
-
-  try {
-    const event = await Event.findOne({_id: id});
-
-    if (event) {
-      event.startDate = new Date(startDate).toISOString().replace('Z', '-01:00');
-      event.endDate = new Date(endDate).toISOString().replace('Z', '-01:00');
-      await event.save();
-
-      res.status(200).json({ message: 'La fecha del evento actualizado correctamente.' });
-    } else {
-      res.status(404).json({ message: 'Evento no encontrado.' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Error al actualizar la fecha del evento', error });
-  }
-};
-
 const getEventQRCode = async (req, res) => {
   const { qrCode } = req.query;
 
@@ -223,8 +169,6 @@ module.exports = {
   getEvents,
   getEventById,
   changeStatusEvent,
-  updateNameEvent,
-  updateDateEvent,
   getEventQRCode,
   createEvent, 
   editEvent
