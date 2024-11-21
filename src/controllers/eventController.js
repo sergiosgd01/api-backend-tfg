@@ -165,11 +165,29 @@ const getEventQRCode = async (req, res) => {
   }
 }
 
+const deleteEvent = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const event = await Event.findByIdAndDelete(id);
+
+    if (event) {
+      res.status(200).json({ message: 'El evento fue eliminado correctamente.', event });
+    } else {
+      res.status(404).json({ message: 'No se encontró el evento.' });
+    }
+  } catch (error) {
+    console.error('Error al eliminar el evento:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+  }
+}
+
 module.exports = {
   getEvents,
   getEventById,
   changeStatusEvent,
   getEventQRCode,
   createEvent, 
-  editEvent
+  editEvent, 
+  deleteEvent
 };
