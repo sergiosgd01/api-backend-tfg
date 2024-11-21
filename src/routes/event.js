@@ -1,5 +1,5 @@
 const express = require('express');
-const { getEvents, getEventById, changeStatusEvent, getEventQRCode, updateNameEvent, updateDateEvent, createEvent } = require('../controllers/eventController');
+const { getEvents, getEventById, changeStatusEvent, getEventQRCode, updateNameEvent, updateDateEvent, createEvent, editEvent } = require('../controllers/eventController');
 const router = express.Router();
 
 router.get('/', getEvents);
@@ -15,5 +15,7 @@ router.put('/updateDate/:id', updateDateEvent);
 router.get('/:code', getEventById);
 
 router.post('/', createEvent);
+
+router.put('/editEvent/:id', editEvent);
 
 module.exports = router;

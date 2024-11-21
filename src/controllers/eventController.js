@@ -59,8 +59,6 @@ const createEvent = async (req, res) => {
       qrCode: '',
     });
 
-    console.log("Datos del evento:", newEvent);
-
     await newEvent.save();
 
     res.status(201).json({ message: 'Evento creado exitosamente.', event: newEvent });
@@ -69,6 +67,67 @@ const createEvent = async (req, res) => {
     res.status(500).json({ message: 'Error al crear el evento', error: error.message || error });
   }
 };
+
+const editEvent = async (req, res) => {
+  const { id } = req.params; // Asume que el ID del evento se pasa como parámetro en la URL
+  const { 
+    code, 
+    name, 
+    province, 
+    time_distance, 
+    multiuser, 
+    status, 
+    cancelledInfo, 
+    startDate, 
+    endDate, 
+    organizationCode 
+  } = req.body;
+
+  // Validación: verifica si se pasó al menos un campo para actualizar
+  if (
+    !code && 
+    !name && 
+    !province && 
+    !time_distance && 
+    !multiuser && 
+    !status && 
+    !cancelledInfo && 
+    !startDate && 
+    !endDate && 
+    !organizationCode
+  ) {
+    return res.status(400).json({ message: 'No se proporcionaron campos para actualizar.' });
+  }
+
+  try {
+    // Busca el evento por ID
+    const event = await Event.findById(id);
+    if (!event) {
+      return res.status(404).json({ message: 'Evento no encontrado.' });
+    }
+
+    // Actualiza los campos que se pasaron en el cuerpo de la solicitud
+    if (code !== undefined) event.code = code;
+    if (name !== undefined) event.name = name;
+    if (province !== undefined) event.province = province;
+    if (time_distance !== undefined) event.time_distance = time_distance;
+    if (multiuser !== undefined) event.multiuser = multiuser;
+    if (status !== undefined) event.status = status;
+    if (cancelledInfo !== undefined) event.cancelledInfo = cancelledInfo;
+    if (startDate !== undefined) event.startDate = new Date(startDate).toISOString().replace('Z', '-01:00');
+    if (endDate !== undefined) event.endDate = new Date(endDate).toISOString().replace('Z', '-01:00');
+    if (organizationCode !== undefined) event.organizationCode = organizationCode;
+
+    // Guarda los cambios en la base de datos
+    await event.save();
+
+    res.status(200).json({ message: 'Evento actualizado exitosamente.', event });
+  } catch (error) {
+    console.error("Error al actualizar el evento:", error);
+    res.status(500).json({ message: 'Error al actualizar el evento', error: error.message || error });
+  }
+};
+
 
 const changeStatusEvent = async (req, res) => {
   const { id } = req.params;
@@ -167,5 +226,6 @@ module.exports = {
   updateNameEvent,
   updateDateEvent,
   getEventQRCode,
-  createEvent
+  createEvent, 
+  editEvent
 };
