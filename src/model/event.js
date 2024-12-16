@@ -4,7 +4,7 @@ const eventSchema = new mongoose.Schema({
   code: Number,
   name: String,
   province: String,
-  time_distance: String,
+  time: Number,
   multiuser: Number,
   status: Number,
   cancelledInfo: String,
