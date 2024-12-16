@@ -26,13 +26,13 @@ const getEventById = async (req, res) => {
 };
 
 const createEvent = async (req, res) => {
-  const { code, name, province, time_distance, multiuser, status, cancelledInfo, startDate, endDate, organizationCode } = req.body;
+  const { code, name, province, time, multiuser, status, cancelledInfo, startDate, endDate, organizationCode } = req.body;
 
   if (
     code === undefined ||
     name === undefined ||
     province === undefined ||
-    time_distance === undefined ||
+    time === undefined ||
     multiuser === undefined ||
     status === undefined ||
     cancelledInfo === undefined ||
@@ -48,7 +48,7 @@ const createEvent = async (req, res) => {
       code,
       name,
       province, 
-      time_distance, 
+      time, 
       multiuser, 
       status, 
       cancelledInfo,
@@ -74,7 +74,7 @@ const editEvent = async (req, res) => {
     code, 
     name, 
     province, 
-    time_distance, 
+    time, 
     multiuser, 
     status, 
     cancelledInfo, 
@@ -87,7 +87,7 @@ const editEvent = async (req, res) => {
     !code && 
     !name && 
     !province && 
-    !time_distance && 
+    !time && 
     !multiuser && 
     !status && 
     !cancelledInfo && 
@@ -107,7 +107,7 @@ const editEvent = async (req, res) => {
     if (code !== undefined) event.code = code;
     if (name !== undefined) event.name = name;
     if (province !== undefined) event.province = province;
-    if (time_distance !== undefined) event.time_distance = time_distance;
+    if (time !== undefined) event.time = time;
     if (multiuser !== undefined) event.multiuser = multiuser;
     if (status !== undefined) event.status = status;
     if (cancelledInfo !== undefined) event.cancelledInfo = cancelledInfo;
