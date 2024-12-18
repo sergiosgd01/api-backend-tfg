@@ -26,14 +26,13 @@ const getEventById = async (req, res) => {
 };
 
 const createEvent = async (req, res) => {
-  const { code, name, province, time, multiuser, status, cancelledInfo, startDate, endDate, organizationCode } = req.body;
+  const { code, name, province, time, status, cancelledInfo, startDate, endDate, organizationCode } = req.body;
 
   if (
     code === undefined ||
     name === undefined ||
     province === undefined ||
     time === undefined ||
-    multiuser === undefined ||
     status === undefined ||
     cancelledInfo === undefined ||
     startDate === undefined ||
@@ -49,7 +48,6 @@ const createEvent = async (req, res) => {
       name,
       province, 
       time, 
-      multiuser, 
       status, 
       cancelledInfo,
       startDate: new Date(startDate).toISOString().replace('Z', '-01:00'),
@@ -76,7 +74,6 @@ const editEvent = async (req, res) => {
     name, 
     province, 
     time, 
-    multiuser, 
     status, 
     cancelledInfo, 
     startDate, 
@@ -89,7 +86,6 @@ const editEvent = async (req, res) => {
     !name && 
     !province && 
     !time && 
-    !multiuser && 
     !status && 
     !cancelledInfo && 
     !startDate && 
@@ -109,7 +105,6 @@ const editEvent = async (req, res) => {
     if (name !== undefined) event.name = name;
     if (province !== undefined) event.province = province;
     if (time !== undefined) event.time = time;
-    if (multiuser !== undefined) event.multiuser = multiuser;
     if (status !== undefined) event.status = status;
     if (cancelledInfo !== undefined) event.cancelledInfo = cancelledInfo;
     if (startDate !== undefined) event.startDate = new Date(startDate).toISOString().replace('Z', '-01:00');

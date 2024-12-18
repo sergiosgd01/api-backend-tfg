@@ -5,7 +5,6 @@ const eventSchema = new mongoose.Schema({
   name: String,
   province: String,
   time: Number,
-  multiuser: Number,
   status: Number,
   cancelledInfo: String,
   startDate: Date,
