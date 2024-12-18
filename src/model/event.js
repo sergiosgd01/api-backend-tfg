@@ -12,7 +12,8 @@ const eventSchema = new mongoose.Schema({
   endDate: Date,
   image: String,
   qrCode: String,
-  organizationCode: Number
+  icon: String,
+  organizationCode: Number,
 })
 
 const Event = mongoose.model('Event', eventSchema)

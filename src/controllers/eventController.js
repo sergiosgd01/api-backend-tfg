@@ -57,6 +57,7 @@ const createEvent = async (req, res) => {
       organizationCode, 
       image: '',
       qrCode: '',
+      icon: '',
     });
 
     await newEvent.save();
