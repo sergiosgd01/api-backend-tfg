@@ -26,12 +26,12 @@ const getEventById = async (req, res) => {
 };
 
 const createEvent = async (req, res) => {
-  const { code, name, province, time, status, cancelledInfo, startDate, endDate, organizationCode } = req.body;
+  const { code, name, postalCode, time, status, cancelledInfo, startDate, endDate, organizationCode } = req.body;
 
   if (
     code === undefined ||
     name === undefined ||
-    province === undefined ||
+    postalCode === undefined ||
     time === undefined ||
     status === undefined ||
     cancelledInfo === undefined ||
@@ -46,7 +46,7 @@ const createEvent = async (req, res) => {
     const newEvent = new Event({
       code,
       name,
-      province, 
+      postalCode, 
       time, 
       status, 
       cancelledInfo,
@@ -72,7 +72,7 @@ const editEvent = async (req, res) => {
   const { 
     code, 
     name, 
-    province, 
+    postalCode, 
     time, 
     status, 
     cancelledInfo, 
@@ -84,7 +84,7 @@ const editEvent = async (req, res) => {
   if (
     !code && 
     !name && 
-    !province && 
+    !postalCode && 
     !time && 
     !status && 
     !cancelledInfo && 
@@ -103,7 +103,7 @@ const editEvent = async (req, res) => {
 
     if (code !== undefined) event.code = code;
     if (name !== undefined) event.name = name;
-    if (province !== undefined) event.province = province;
+    if (postalCode !== undefined) event.postalCode = postalCode;
     if (time !== undefined) event.time = time;
     if (status !== undefined) event.status = status;
     if (cancelledInfo !== undefined) event.cancelledInfo = cancelledInfo;
