@@ -44,8 +44,69 @@ const registerUser = async (req, res) => {
   }
 };
 
+const editUser = async (req, res) => {
+  const { id } = req.params; 
+  const { 
+    username, 
+    email, 
+    password,
+    admin
+  } = req.body;
+
+  // Verifica que todos los campos estén presentes
+  if (
+    username === undefined || 
+    email === undefined || 
+    password === undefined || 
+    admin === undefined
+  ) {
+    return res.status(400).json({ message: 'Todos los campos son obligatorios para actualizar el usuario.' });
+  }
+
+  try {
+    // Busca el usuario por ID
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado.' });
+    }
+
+    // Actualiza los valores del usuario
+    user.username = username;
+    user.email = email;
+    user.password = password;
+    user.admin = admin;
+
+    // Guarda los cambios
+    await user.save();
+
+    res.status(200).json({ message: 'Usuario actualizado exitosamente.', user });
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).json({ message: 'Error al actualizar el usuario', error: error.message || error });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const user = await User.findByIdAndDelete(id);
+
+    if (user) {
+      res.status(200).json({ message: 'El usuario fue eliminado correctamente.', user });
+    } else {
+      res.status(404).json({ message: 'No se encontró el usuario.' });
+    }
+  } catch (error) {
+    console.error('Error al eliminar el usuario:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+  }
+};
+
 module.exports = {
   getUsers,
   loginUser,
   registerUser,
+  editUser,
+  deleteUser,
 };
