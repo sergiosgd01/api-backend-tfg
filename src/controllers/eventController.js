@@ -9,6 +9,18 @@ const getEvents = async (req, res) => {
   }
 };
 
+const getEventsOrganization = async (req, res) => {
+  const { organizationCode } = req.params;
+
+  try {
+    const events = await Event.find({ organizationCode: Number(organizationCode) });
+    
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener los eventos', error });
+  }
+};
+
 const getEventById = async (req, res) => {
   const { code } = req.params;
 
@@ -180,6 +192,7 @@ const deleteEvent = async (req, res) => {
 
 module.exports = {
   getEvents,
+  getEventsOrganization,
   getEventById,
   changeStatusEvent,
   getEventQRCode,

@@ -4,6 +4,7 @@ require('dotenv').config();
 require('../mongo')
 
 const userRoutes = require('./routes/user');
+const organizationRoutes = require('./routes/organization');
 const eventRoutes = require('./routes/event');
 const locationRoutes = require('./routes/location');
 const routeRoutes = require('./routes/route');
@@ -16,6 +17,8 @@ app.use(cors());
 app.use(express.json());  
 
 app.use('/api/user', userRoutes);
+
+app.use('/api/organizations', organizationRoutes);
 
 app.use('/api/events', eventRoutes);
 

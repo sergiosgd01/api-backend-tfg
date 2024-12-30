@@ -1,14 +1,16 @@
 const express = require('express');
-const { getEvents, getEventById, changeStatusEvent, getEventQRCode, createEvent, editEvent, deleteEvent } = require('../controllers/eventController');
+const { getEvents, getEventsOrganization, getEventById, changeStatusEvent, getEventQRCode, createEvent, editEvent, deleteEvent } = require('../controllers/eventController');
 const router = express.Router();
 
 router.get('/', getEvents);
 
+router.get('/getEventsOrganization/:organizationCode', getEventsOrganization);
+
 router.get('/getEventQRCode', getEventQRCode);
 
-router.put('/cancel/:id', changeStatusEvent);
-
 router.get('/:code', getEventById);
+
+router.put('/cancel/:id', changeStatusEvent);
 
 router.post('/', createEvent);
 
