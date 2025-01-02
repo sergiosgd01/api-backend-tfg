@@ -21,6 +21,23 @@ const getEventsOrganization = async (req, res) => {
   }
 };
 
+const getEventById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+
+    const event = await Event.findOne({ _id: id }); 
+
+    if (event) {
+      res.status(200).json(event);
+    } else {
+      res.status(404).json({ message: 'Evento no encontrado.' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener el evento', error });
+  }
+};
+
 const getEventByCode = async (req, res) => {
   const { code } = req.params;
 
@@ -193,6 +210,7 @@ const deleteEvent = async (req, res) => {
 module.exports = {
   getEvents,
   getEventsOrganization,
+  getEventById,
   getEventByCode,
   changeStatusEvent,
   getEventQRCode,
