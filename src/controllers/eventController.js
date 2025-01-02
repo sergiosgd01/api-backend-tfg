@@ -21,7 +21,7 @@ const getEventsOrganization = async (req, res) => {
   }
 };
 
-const getEventById = async (req, res) => {
+const getEventByCode = async (req, res) => {
   const { code } = req.params;
 
   try {
@@ -193,7 +193,7 @@ const deleteEvent = async (req, res) => {
 module.exports = {
   getEvents,
   getEventsOrganization,
-  getEventById,
+  getEventByCode,
   changeStatusEvent,
   getEventQRCode,
   createEvent, 

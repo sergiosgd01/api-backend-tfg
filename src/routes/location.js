@@ -3,9 +3,7 @@ const { getLocation, verifyDeviceId, insertLocation, getLocationDorsal, deleteLo
 const router = express.Router();
 
 router.get('/verifyDeviceId', verifyDeviceId);
-
 router.get('/getLocationDorsal', getLocationDorsal);
-
 router.get('/:code', getLocation);
 
 router.post('/', insertLocation);

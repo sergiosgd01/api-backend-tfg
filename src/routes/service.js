@@ -4,8 +4,8 @@ const router = express.Router();
 
 router.get('/:code', getService);
 
-router.delete('/:id', deleteService);
-
 router.post('/', createService);
+
+router.delete('/:id', deleteService);
 
 module.exports = router;
