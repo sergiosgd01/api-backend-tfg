@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const {
   insertRawLocation,
-  processRawLocations,
-  getRawLocations,
+  getRawLocationsByEventCode,
 } = require('../controllers/rawLocationController');
 
-router.post('/', insertRawLocation); // Endpoint para insertar ubicaciones sin procesar
-//router.get('/', getRawLocations); // Endpoint para listar ubicaciones sin procesar
-//router.post('/process-locations', processRawLocations); // Endpoint para procesar ubicaciones
+// Inserta una nueva ubicación sin procesar
+router.post('/', insertRawLocation);
+
+// Recupera ubicaciones por código de evento
+router.get('/:code', getRawLocationsByEventCode);
 
 module.exports = router;
