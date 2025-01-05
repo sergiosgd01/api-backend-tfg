@@ -8,14 +8,16 @@ const insertRawLocation = async (req, res) => {
   try {
     console.log("Nueva ubicación recibida:", location);
 
-    const lastRawLocation = await RawLocation.findOne({ code: location.code }).sort({ timestamp: -1 });
-    console.log("Última ubicación sin procesar encontrada:", lastRawLocation);
-
+    // Inserta siempre la nueva ubicación en RawLocation
     const newRawLocation = new RawLocation({ ...location, reason: null });
     await newRawLocation.save();
     console.log("Ubicación insertada en RawLocation:", newRawLocation);
 
+    // Verifica primero si la precisión es válida
     if (location.accuracy > 30) {
+      console.log("Ubicación no válida debido a precisión alta.");
+
+      // Actualiza el campo `reason` y `errorCode` en RawLocation
       newRawLocation.reason = "La ubicación no es precisa.";
       newRawLocation.errorCode = 2; // Baja precisión
       newRawLocation.processed = true;
@@ -28,11 +30,19 @@ const insertRawLocation = async (req, res) => {
       });
     }
 
+    // Busca la última ubicación sin procesar
+    const lastRawLocation = await RawLocation.findOne({ code: location.code }).sort({ timestamp: -1 });
+    console.log("Última ubicación sin procesar encontrada:", lastRawLocation);
+
+    // Verifica si la ubicación es válida para insertar en Location
     if (
       !lastRawLocation ||
       lastRawLocation.latitude !== location.latitude ||
       lastRawLocation.longitude !== location.longitude
     ) {
+      console.log("Ubicación válida para insertar en Location.");
+
+      // Si es válida, insértala en Location
       const newLocation = new Location({
         latitude: location.latitude,
         longitude: location.longitude,
@@ -44,6 +54,7 @@ const insertRawLocation = async (req, res) => {
       await newLocation.save();
       console.log("Ubicación insertada en Location:", newLocation);
 
+      // Marca la ubicación en RawLocation como procesada
       newRawLocation.processed = true;
       await newRawLocation.save();
 
@@ -54,6 +65,9 @@ const insertRawLocation = async (req, res) => {
         location: newLocation,
       });
     } else {
+      console.log("Ubicación no válida para insertar en Location. Es igual a la última sin procesar.");
+
+      // Si no es válida, actualiza el campo `reason` y `errorCode` en RawLocation
       newRawLocation.reason = "Ubicación igual a la última sin procesar.";
       newRawLocation.errorCode = 1; // Igual a la anterior
       newRawLocation.processed = true;
