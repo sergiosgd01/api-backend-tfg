@@ -20,8 +20,9 @@ const insertRawLocation = async (req, res) => {
     if (location.accuracy > 30) {
       console.log("Ubicación no válida debido a precisión alta.");
 
-      // Actualiza el campo `reason` en RawLocation
+      // Actualiza el campo `reason` y `errorCode` en RawLocation
       newRawLocation.reason = "La ubicación no es precisa.";
+      newRawLocation.errorCode = 2; // Baja precisión
       newRawLocation.processed = true;
       await newRawLocation.save();
 
@@ -56,7 +57,7 @@ const insertRawLocation = async (req, res) => {
       newRawLocation.processed = true;
       await newRawLocation.save();
 
-      res.status(201).json({
+      return res.status(201).json({
         success: true,
         message: "Ubicación procesada e insertada correctamente en ambas tablas.",
         rawLocation: newRawLocation,
@@ -65,12 +66,13 @@ const insertRawLocation = async (req, res) => {
     } else {
       console.log("Ubicación no válida para insertar en Location. Es igual a la última sin procesar.");
 
-      // Si no es válida, actualiza el campo `reason` en RawLocation
+      // Si no es válida, actualiza el campo `reason` y `errorCode` en RawLocation
       newRawLocation.reason = "Ubicación igual a la última sin procesar.";
+      newRawLocation.errorCode = 1; // Igual a la anterior
       newRawLocation.processed = true;
       await newRawLocation.save();
 
-      res.status(201).json({
+      return res.status(201).json({
         success: true,
         message: "Ubicación insertada en RawLocation, pero no en Location debido a que es igual a la última sin procesar.",
         rawLocation: newRawLocation,

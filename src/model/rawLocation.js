@@ -7,6 +7,7 @@ const rawLocationSchema = new mongoose.Schema({
   timestamp: { type: Date, required: true },
   code: { type: Number, required: true },
   processed: { type: Boolean, default: false },
+  errorCode: { type: Number, default: 0 },
   reason: { type: String, default: null } // Campo adicional para la razón
 });
 
