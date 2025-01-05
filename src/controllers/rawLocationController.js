@@ -8,19 +8,17 @@ const insertRawLocation = async (req, res) => {
   try {
     console.log("Nueva ubicación recibida:", location);
 
-    // Inserta siempre la nueva ubicación en RawLocation
-    const newRawLocation = new RawLocation({ ...location, reason: null });
-    await newRawLocation.save();
-    console.log("Ubicación insertada en RawLocation:", newRawLocation);
-
     // Verifica primero si la precisión es válida
     if (location.accuracy > 30) {
       console.log("Ubicación no válida debido a precisión alta.");
 
-      // Actualiza el campo `reason` y `errorCode` en RawLocation
-      newRawLocation.reason = "La ubicación no es precisa.";
-      newRawLocation.errorCode = 2; // Baja precisión
-      newRawLocation.processed = true;
+      // Inserta directamente en RawLocation con el error correspondiente
+      const newRawLocation = new RawLocation({
+        ...location,
+        reason: "La ubicación no es precisa.",
+        errorCode: 2, // Baja precisión
+        processed: true,
+      });
       await newRawLocation.save();
 
       return res.status(201).json({
@@ -30,15 +28,19 @@ const insertRawLocation = async (req, res) => {
       });
     }
 
-    // Busca la última ubicación sin procesar
+    // Busca la última ubicación antes de insertar la nueva
     const lastRawLocation = await RawLocation.findOne({ code: location.code }).sort({ timestamp: -1 });
     console.log("Última ubicación sin procesar encontrada:", lastRawLocation);
 
-    // Verifica si la ubicación es válida para insertar en Location
+    // Inserta la nueva ubicación en RawLocation
+    const newRawLocation = new RawLocation({ ...location, reason: null });
+    await newRawLocation.save();
+
+    // Verifica si la nueva ubicación es válida para insertar en Location
     if (
-      !lastRawLocation ||
-      lastRawLocation.latitude !== location.latitude ||
-      lastRawLocation.longitude !== location.longitude
+      !lastRawLocation || // No hay ninguna ubicación en RawLocation aún
+      lastRawLocation.latitude !== location.latitude || // Coordenada diferente
+      lastRawLocation.longitude !== location.longitude // Coordenada diferente
     ) {
       console.log("Ubicación válida para insertar en Location.");
 
