@@ -8,7 +8,7 @@ const rawLocationSchema = new mongoose.Schema({
   code: { type: Number, required: true },
   processed: { type: Boolean, default: false },
   errorCode: { type: Number, default: 0 },
-  reason: { type: String, default: null } // Campo adicional para la razón
+  reason: { type: String, default: null } 
 });
 
 module.exports = mongoose.model('RawLocation', rawLocationSchema);
