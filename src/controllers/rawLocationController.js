@@ -107,7 +107,33 @@ const getRawLocationsByEventCode = async (req, res) => {
   }
 };
 
+// Eliminar todas las ubicaciones sin procesar de un evento por código
+const deleteRawLocationsByEventCode = async (req, res) => {
+  const { code } = req.params;
+
+  try {
+    console.log(`Eliminando ubicaciones para el evento con código: ${code}`);
+
+    const result = await RawLocation.deleteMany({ code });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        message: "No se encontraron ubicaciones para este evento.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Se eliminaron ${result.deletedCount} ubicaciones del evento con código: ${code}.`,
+    });
+  } catch (error) {
+    console.error("Error al eliminar ubicaciones por código de evento:", error);
+    res.status(500).json({ message: "Error interno del servidor." });
+  }
+};
+
 module.exports = {
   insertRawLocation,
   getRawLocationsByEventCode,
+  deleteRawLocationsByEventCode, 
 };

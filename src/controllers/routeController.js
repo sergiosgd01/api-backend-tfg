@@ -52,8 +52,33 @@ const createRoute = async (req, res) => {
   }
 }
 
+const deleteRoutesByEventCode = async (req, res) => {
+  const code = Number(req.params.code);
+
+  try {
+    console.log(`Eliminando todas las rutas para el evento con código: ${code}`);
+
+    const result = await Route.deleteMany({ code });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        message: 'No se encontraron rutas para este evento.',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Se eliminaron ${result.deletedCount} rutas del evento con código: ${code}.`,
+    });
+  } catch (error) {
+    console.error('Error al eliminar las rutas por código de evento:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+  }
+};
+
 module.exports = {
   getRoute,
   deleteRoute,
   createRoute,
+  deleteRoutesByEventCode,
 };
