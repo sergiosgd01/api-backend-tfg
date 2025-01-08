@@ -56,9 +56,15 @@ const getEventByCode = async (req, res) => {
 
 const checkCodeExists = async (req, res) => {
   const { code } = req.params;
+  const { id } = req.query;
 
   try {
-    const exists = await Event.exists({ code: Number(code) });
+    const query = id
+      ? { code: Number(code), _id: { $ne: id } } 
+      : { code: Number(code) }; 
+
+    const exists = await Event.exists(query);
+
     res.status(200).json({ exists: !!exists });
   } catch (error) {
     res.status(500).json({ message: 'Error al verificar el código', error });
