@@ -97,7 +97,7 @@ const createEvent = async (req, res) => {
 };
 
 const editEvent = async (req, res) => {
-  const { id } = req.params; 
+  const { id } = req.params;
   const { 
     code, 
     name, 
@@ -136,8 +136,8 @@ const editEvent = async (req, res) => {
     if (time !== undefined) event.time = time;
     if (status !== undefined) event.status = status;
     if (cancelledInfo !== undefined) event.cancelledInfo = cancelledInfo;
-    if (startDate !== undefined) event.startDate = new Date(startDate).toISOString().replace('Z', '-01:00');
-    if (endDate !== undefined) event.endDate = new Date(endDate).toISOString().replace('Z', '-01:00');
+    if (startDate !== undefined) event.startDate = new Date(startDate); // Almacena como `Date`
+    if (endDate !== undefined) event.endDate = new Date(endDate); // Almacena como `Date`
     if (organizationCode !== undefined) event.organizationCode = organizationCode;
 
     await event.save();
