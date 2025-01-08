@@ -1,7 +1,8 @@
 const express = require('express');
 const {
   getOrganizations,
-  getOrganizationById, // Importa el nuevo método
+  getOrganizationById, 
+  getOrganizationByCode,
   createOrganization,
   updateOrganization,
   deleteOrganization
@@ -10,6 +11,7 @@ const router = express.Router();
 
 router.get('/', getOrganizations);
 router.get('/:id', getOrganizationById); 
+router.get('/code/:code', getOrganizationByCode);
 
 router.post('/', createOrganization);
 

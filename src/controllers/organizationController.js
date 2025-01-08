@@ -24,6 +24,21 @@ const getOrganizationById = async (req, res) => {
   }
 };
 
+const getOrganizationByCode = async (req, res) => {
+  const { code } = req.params;
+
+  try {
+    const organization = await Organization.findOne({ code: Number(code) }); // Buscar por código
+    if (!organization) {
+      return res.status(404).json({ message: 'Organización no encontrada' });
+    }
+
+    res.status(200).json(organization);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener la organización por código', error });
+  }
+};
+
 const generateUniqueCode = async () => {
   let code;
   let exists = true;
@@ -101,7 +116,8 @@ const deleteOrganization = async (req, res) => {
 
 module.exports = {
   getOrganizations,
-  getOrganizationById, // Nuevo método añadido
+  getOrganizationById, 
+  getOrganizationByCode, 
   createOrganization,
   updateOrganization,
   deleteOrganization
