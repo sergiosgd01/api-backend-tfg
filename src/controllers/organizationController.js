@@ -9,11 +9,26 @@ const getOrganizations = async (req, res) => {
   }
 };
 
+const getOrganizationById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const organization = await Organization.findById(id);
+    if (!organization) {
+      return res.status(404).json({ message: 'Organización no encontrada' });
+    }
+
+    res.status(200).json(organization);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener la organización', error });
+  }
+};
+
 const generateUniqueCode = async () => {
   let code;
   let exists = true;
   do {
-    code = Math.floor(Math.random() * (999 - 1 + 1)) + 1; // Número entre 1 y 999
+    code = Math.floor(Math.random() * (999 - 1 + 1)) + 1; 
     exists = await Organization.exists({ code });
   } while (exists);
   return code;
@@ -76,6 +91,7 @@ const deleteOrganization = async (req, res) => {
 
 module.exports = {
   getOrganizations,
+  getOrganizationById, // Nuevo método añadido
   createOrganization,
   updateOrganization,
   deleteOrganization
