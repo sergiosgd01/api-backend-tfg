@@ -53,19 +53,29 @@ const createOrganization = async (req, res) => {
 
 const updateOrganization = async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, code } = req.body;
 
   if (!name || name.trim() === '') {
     return res.status(400).json({ message: 'El nombre es obligatorio' });
   }
 
+  if (!code || isNaN(Number(code))) {
+    return res.status(400).json({ message: 'El código debe ser un número' });
+  }
+
   try {
+    const duplicate = await Organization.findOne({ code, _id: { $ne: id } });
+    if (duplicate) {
+      return res.status(400).json({ message: 'El código ya existe en la base de datos' });
+    }
+
     const organization = await Organization.findById(id);
     if (!organization) {
       return res.status(404).json({ message: 'Organización no encontrada' });
     }
 
     organization.name = name;
+    organization.code = code;
     await organization.save();
 
     res.status(200).json({ message: 'Organización actualizada exitosamente', organization });
