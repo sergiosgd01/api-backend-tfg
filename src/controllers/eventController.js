@@ -71,12 +71,21 @@ const checkCodeExists = async (req, res) => {
   }
 };
 
+const generateUniqueEventCode = async () => {
+  let code;
+  let exists = true;
+  do {
+    code = Math.floor(Math.random() * (99999 - 1 + 1)) + 1; // Genera un número aleatorio entre 1 y 99999
+    exists = await Event.exists({ code });
+  } while (exists);
+  return code;
+};
+
 const createEvent = async (req, res) => {
-  const { code, name, postalCode, time, cancelledInfo, startDate, endDate, organizationCode } = req.body;
+  const { name, postalCode, time, cancelledInfo, startDate, endDate, organizationCode } = req.body;
 
   // Validar que los parámetros obligatorios estén presentes
   if (
-    code === undefined ||
     name === undefined ||
     postalCode === undefined ||
     time === undefined ||
@@ -88,15 +97,17 @@ const createEvent = async (req, res) => {
   }
 
   try {
+    const code = await generateUniqueEventCode(); // Generar código único
+
     const newEvent = new Event({
       code,
       name,
       postalCode,
       time,
-      status: 0, 
-      cancelledInfo: cancelledInfo || '', 
-      startDate: new Date(startDate).toISOString().replace('Z', '-01:00'),
-      endDate: new Date(endDate).toISOString().replace('Z', '-01:00'),
+      status: 0, // Siempre inicia con estado 0
+      cancelledInfo: cancelledInfo || '',
+      startDate: new Date(startDate).toISOString(),
+      endDate: new Date(endDate).toISOString(),
       organizationCode,
       image: '',
       icon: '',
