@@ -54,6 +54,17 @@ const getEventByCode = async (req, res) => {
   }
 };
 
+const checkCodeExists = async (req, res) => {
+  const { code } = req.params;
+
+  try {
+    const exists = await Event.exists({ code: Number(code) });
+    res.status(200).json({ exists: !!exists });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al verificar el código', error });
+  }
+};
+
 const createEvent = async (req, res) => {
   const { code, name, postalCode, time, status, cancelledInfo, startDate, endDate, organizationCode } = req.body;
 
@@ -212,6 +223,7 @@ module.exports = {
   getEventsOrganization,
   getEventById,
   getEventByCode,
+  checkCodeExists,
   changeStatusEvent,
   getEventQRCode,
   createEvent, 
