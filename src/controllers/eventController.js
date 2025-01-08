@@ -72,35 +72,33 @@ const checkCodeExists = async (req, res) => {
 };
 
 const createEvent = async (req, res) => {
-  const { code, name, postalCode, time, status, cancelledInfo, startDate, endDate, organizationCode } = req.body;
+  const { code, name, postalCode, time, cancelledInfo, startDate, endDate, organizationCode } = req.body;
 
+  // Validar que los parámetros obligatorios estén presentes
   if (
     code === undefined ||
     name === undefined ||
     postalCode === undefined ||
     time === undefined ||
-    status === undefined ||
-    cancelledInfo === undefined ||
     startDate === undefined ||
     endDate === undefined ||
     organizationCode === undefined
   ) {
     return res.status(400).json({ message: 'Faltan parámetros obligatorios' });
   }
-  
+
   try {
     const newEvent = new Event({
       code,
       name,
-      postalCode, 
-      time, 
-      status, 
-      cancelledInfo,
+      postalCode,
+      time,
+      status: 0, 
+      cancelledInfo: cancelledInfo || '', 
       startDate: new Date(startDate).toISOString().replace('Z', '-01:00'),
       endDate: new Date(endDate).toISOString().replace('Z', '-01:00'),
-      organizationCode, 
+      organizationCode,
       image: '',
-      qrCode: '',
       icon: '',
     });
 
@@ -108,7 +106,7 @@ const createEvent = async (req, res) => {
 
     res.status(201).json({ message: 'Evento creado exitosamente.', event: newEvent });
   } catch (error) {
-    console.error("Error al crear el evento:", error);
+    console.error('Error al crear el evento:', error);
     res.status(500).json({ message: 'Error al crear el evento', error: error.message || error });
   }
 };
