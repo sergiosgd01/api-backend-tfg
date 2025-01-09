@@ -1,5 +1,18 @@
 const ServiceType = require('../model/serviceType');
 
+// Generar un `type` único
+const generateUniqueType = async () => {
+  let type;
+  let exists = true;
+
+  do {
+    type = Math.floor(Math.random() * 99) + 1; // Genera un número entre 1 y 99
+    exists = await ServiceType.exists({ type });
+  } while (exists);
+
+  return type;
+};
+
 // Obtener todos los tipos de servicios
 const getServiceTypes = async (req, res) => {
   try {
@@ -11,25 +24,18 @@ const getServiceTypes = async (req, res) => {
   }
 };
 
-// Crear un nuevo tipo de servicio
+// Crear un nuevo tipo de servicio con generación automática de `type`
 const createServiceType = async (req, res) => {
-  const { type, name, image } = req.body;
+  const { name, image } = req.body;
 
   // Validar los datos de entrada
-  if (type === undefined || name === undefined || image === undefined) {
-    return res.status(400).json({ message: 'Faltan datos obligatorios.' });
-  }
-
-  if (type < 0 || type > 99) {
-    return res.status(400).json({ message: 'El tipo debe ser un número entre 0 y 99.' });
+  if (!name || !image) {
+    return res.status(400).json({ message: 'Faltan datos obligatorios (nombre e imagen).' });
   }
 
   try {
-    // Verificar que el tipo no exista
-    const exists = await ServiceType.exists({ type });
-    if (exists) {
-      return res.status(400).json({ message: 'El tipo de servicio ya existe.' });
-    }
+    // Generar un tipo único
+    const type = await generateUniqueType();
 
     // Crear el nuevo tipo
     const newServiceType = new ServiceType({ type, name, image });
