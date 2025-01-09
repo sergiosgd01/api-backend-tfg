@@ -1,4 +1,5 @@
 const Event = require('../model/event'); 
+const { createEventControl } = require('./eventControlController');
 
 const getEvents = async (req, res) => {
   try {
@@ -106,6 +107,8 @@ const createEvent = async (req, res) => {
     });
 
     await newEvent.save();
+
+    await createEventControl(code, time);
 
     res.status(201).json({ message: 'Evento creado exitosamente.', event: newEvent });
   } catch (error) {
