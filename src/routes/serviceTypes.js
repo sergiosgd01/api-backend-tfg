@@ -3,7 +3,7 @@ const {
   getServiceTypes,
   createServiceType,
   deleteServiceType,
-} = require('../controllers/serviceTypeController');
+} = require('../controllers/serviceTypesController');
 
 const router = express.Router();
 
