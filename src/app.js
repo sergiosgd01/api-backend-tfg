@@ -11,6 +11,7 @@ const routeRoutes = require('./routes/route');
 const serviceRoutes = require('./routes/service');
 const serviceTypesRoutes = require('./routes/serviceTypes');
 const rawLocation = require('./routes/rawLocation');
+const eventControl = require('./routes/eventControl');
 
 const app = express();
 
@@ -32,6 +33,8 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/serviceTypes', serviceTypesRoutes);
 
 app.use('/api/rawLocations', rawLocation);
+
+app.use('/api/eventControl', eventControl);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
