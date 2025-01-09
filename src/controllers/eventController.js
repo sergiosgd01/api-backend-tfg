@@ -84,15 +84,7 @@ const generateUniqueEventCode = async () => {
 const createEvent = async (req, res) => {
   const { name, postalCode, time, cancelledInfo, startDate, endDate, organizationCode } = req.body;
 
-  // Validar que los parámetros obligatorios estén presentes
-  if (
-    name === undefined ||
-    postalCode === undefined ||
-    time === undefined ||
-    startDate === undefined ||
-    endDate === undefined ||
-    organizationCode === undefined
-  ) {
+  if (!name || !postalCode || !time || !startDate || !endDate || !organizationCode) {
     return res.status(400).json({ message: 'Faltan parámetros obligatorios' });
   }
 
@@ -104,7 +96,7 @@ const createEvent = async (req, res) => {
       name,
       postalCode,
       time,
-      status: 0, // Siempre inicia con estado 0
+      status: 0,
       cancelledInfo: cancelledInfo || '',
       startDate: new Date(startDate).toISOString(),
       endDate: new Date(endDate).toISOString(),
@@ -117,8 +109,12 @@ const createEvent = async (req, res) => {
 
     res.status(201).json({ message: 'Evento creado exitosamente.', event: newEvent });
   } catch (error) {
+    if (error.code === 11000 && error.keyValue?.code) {
+      // Manejar error de unicidad
+      return res.status(400).json({ message: 'El código del evento ya existe. Por favor, intente nuevamente.' });
+    }
     console.error('Error al crear el evento:', error);
-    res.status(500).json({ message: 'Error al crear el evento', error: error.message || error });
+    res.status(500).json({ message: 'Error al crear el evento', error });
   }
 };
 
@@ -136,17 +132,7 @@ const editEvent = async (req, res) => {
     organizationCode 
   } = req.body;
 
-  if (
-    !code && 
-    !name && 
-    !postalCode && 
-    !time && 
-    !status && 
-    !cancelledInfo && 
-    !startDate && 
-    !endDate && 
-    !organizationCode
-  ) {
+  if (!name && !postalCode && !time && !status && !cancelledInfo && !startDate && !endDate && !organizationCode) {
     return res.status(400).json({ message: 'No se proporcionaron campos para actualizar.' });
   }
 
@@ -156,22 +142,32 @@ const editEvent = async (req, res) => {
       return res.status(404).json({ message: 'Evento no encontrado.' });
     }
 
-    if (code !== undefined) event.code = code;
+    if (code !== undefined) {
+      const existingEvent = await Event.findOne({ code, _id: { $ne: id } });
+      if (existingEvent) {
+        return res.status(400).json({ message: 'El código ya existe en la base de datos.' });
+      }
+      event.code = code;
+    }
+
     if (name !== undefined) event.name = name;
     if (postalCode !== undefined) event.postalCode = postalCode;
     if (time !== undefined) event.time = time;
     if (status !== undefined) event.status = status;
     if (cancelledInfo !== undefined) event.cancelledInfo = cancelledInfo;
-    if (startDate !== undefined) event.startDate = new Date(startDate); // Almacena como `Date`
-    if (endDate !== undefined) event.endDate = new Date(endDate); // Almacena como `Date`
+    if (startDate !== undefined) event.startDate = new Date(startDate);
+    if (endDate !== undefined) event.endDate = new Date(endDate);
     if (organizationCode !== undefined) event.organizationCode = organizationCode;
 
     await event.save();
 
     res.status(200).json({ message: 'Evento actualizado exitosamente.', event });
   } catch (error) {
-    console.error("Error al actualizar el evento:", error);
-    res.status(500).json({ message: 'Error al actualizar el evento', error: error.message || error });
+    if (error.code === 11000 && error.keyValue?.code) {
+      return res.status(400).json({ message: 'El código del evento ya existe.' });
+    }
+    console.error('Error al actualizar el evento:', error);
+    res.status(500).json({ message: 'Error al actualizar el evento', error });
   }
 };
 

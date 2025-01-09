@@ -5,6 +5,8 @@ const serviceTypeSchema = new mongoose.Schema({
     type: Number,
     unique: true, 
     required: true, 
+    min: 1,
+    max: 99
   },
   name: {
     type: String,
