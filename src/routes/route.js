@@ -1,8 +1,14 @@
 const express = require('express');
-const { getRoute, deleteRoute, createRoute, deleteRoutesByEventCode } = require('../controllers/routeController');
+const { 
+  getRouteByEventCode, 
+  deleteRoute, 
+  createRoute, 
+  deleteRoutesByEventCode 
+} = require('../controllers/routeController');
+
 const router = express.Router();
 
-router.get('/:code', getRoute);
+router.get('/:code', getRouteByEventCode);
 
 router.post('/', createRoute);
 

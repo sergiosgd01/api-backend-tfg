@@ -1,6 +1,6 @@
 const Route = require('../model/route'); 
 
-const getRoute = async (req, res) => {
+const getRouteByEventCode = async (req, res) => {
   const code = Number(req.params.code);
 
   try {
@@ -77,7 +77,7 @@ const deleteRoutesByEventCode = async (req, res) => {
 };
 
 module.exports = {
-  getRoute,
+  getRouteByEventCode,
   deleteRoute,
   createRoute,
   deleteRoutesByEventCode,

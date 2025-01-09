@@ -1,6 +1,6 @@
 const Service = require('../model/service'); 
 
-const getService = async (req, res) => {
+const getServiceByEventCode = async (req, res) => {
   const code = Number(req.params.code);
 
   try {
@@ -77,7 +77,7 @@ const createService = async (req, res) => {
 }
 
 module.exports = {
-  getService,
+  getServiceByEventCode,
   deleteService,
   deleteAllServicesByEventCode,
   createService,

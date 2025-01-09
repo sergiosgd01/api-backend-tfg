@@ -1,8 +1,14 @@
 const express = require('express');
-const { getService, deleteService, deleteAllServicesByEventCode, createService } = require('../controllers/serviceController');
+const { 
+  getServiceByEventCode, 
+  deleteService, 
+  deleteAllServicesByEventCode, 
+  createService 
+} = require('../controllers/serviceController');
+
 const router = express.Router();
 
-router.get('/:code', getService);
+router.get('/:code', getServiceByEventCode);
 
 router.post('/', createService);
 

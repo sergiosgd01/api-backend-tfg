@@ -6,11 +6,9 @@ const {
   deleteRawLocationsByEventCode,
 } = require('../controllers/rawLocationController');
 
-// Inserta una nueva ubicación sin procesar
-router.post('/', insertRawLocation);
-
-// Recupera ubicaciones por código de evento
 router.get('/:code', getRawLocationsByEventCode);
+
+router.post('/', insertRawLocation);
 
 router.delete('/:code', deleteRawLocationsByEventCode);
 
