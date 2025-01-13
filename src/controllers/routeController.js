@@ -82,8 +82,7 @@ const deleteRoutesByEventCode = async (req, res) => {
 };
 
 const updateVisitedStatus = async (req, res) => {
-  const { code } = req.params;
-  const { pointIds } = req.body; // Lista de identificadores de puntos a actualizar
+  const { pointIds } = req.body;
 
   if (!Array.isArray(pointIds) || pointIds.length === 0) {
     return res.status(400).json({ message: 'Se requiere un array de identificadores de puntos.' });
@@ -93,9 +92,7 @@ const updateVisitedStatus = async (req, res) => {
     // Actualiza los puntos marcados como visitados en una sola operación
     await Route.updateMany({ _id: { $in: pointIds } }, { visited: true });
 
-    // Devuelve los puntos actualizados
-    const updatedPoints = await Route.find({ code });
-    res.status(200).json(updatedPoints);
+    res.status(200).json({ message: 'Puntos visitados actualizados correctamente.' });
   } catch (error) {
     console.error('Error actualizando puntos visitados:', error);
     res.status(500).json({ message: 'Error interno del servidor.' });

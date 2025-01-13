@@ -19,7 +19,7 @@ router.delete('/:id', deleteRoute);
 router.delete('/event/:code', deleteRoutesByEventCode);
 
 // Endpoint para actualizar un punto específico
-router.patch('/:code', updateVisitedStatus);
+router.patch('/update-visited', updateVisitedStatus);
 
 // Endpoint para actualizar múltiples puntos basados en las ubicaciones del evento
 router.post('/event/:code/update-visited', updateVisitedStatusByEvent);
