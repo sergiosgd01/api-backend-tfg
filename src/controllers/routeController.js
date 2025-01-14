@@ -134,54 +134,6 @@ const resetVisitedStatusByEventCode = async (req, res) => {
   }
 };
 
-
-// const updateVisitedStatusByEvent = async (req, res) => {
-//   const { code } = req.params;
-//   const { eventLocations } = req.body;
-
-//   const MAX_DISTANCE = 30; // Distancia máxima en metros para marcar un punto como visitado
-
-//   if (!Array.isArray(eventLocations) || eventLocations.length === 0) {
-//     return res.status(400).json({ message: 'Se requiere un array de ubicaciones del evento.' });
-//   }
-
-//   try {
-//     const routePoints = await Route.find({ code });
-
-//     for (const location of eventLocations) {
-//       for (const point of routePoints) {
-//         if (!point.visited) {
-//           const distance = calculateDistance(location, point);
-//           if (distance <= MAX_DISTANCE) {
-//             await Route.findByIdAndUpdate(point._id, { visited: true });
-//           }
-//         }
-//       }
-//     }
-
-//     res.status(200).json({ message: 'Estado de visited actualizado para los puntos cercanos.' });
-//   } catch (error) {
-//     console.error('Error al actualizar el estado de visited por ubicaciones del evento:', error);
-//     res.status(500).json({ message: 'Error interno del servidor.' });
-//   }
-// };
-
-// // Función para calcular la distancia entre dos puntos
-// const calculateDistance = (point1, point2) => {
-//   const R = 6371e3; // Radio de la Tierra en metros
-//   const φ1 = (point1.latitude * Math.PI) / 180;
-//   const φ2 = (point2.latitude * Math.PI) / 180;
-//   const Δφ = ((point2.latitude - point1.latitude) * Math.PI) / 180;
-//   const Δλ = ((point2.longitude - point1.longitude) * Math.PI) / 180;
-
-//   const a =
-//     Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-//     Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-//   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-//   return R * c; // Distancia en metros
-// };
-
 module.exports = {
   getRouteByEventCode,
   deleteRoute,
