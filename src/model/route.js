@@ -8,6 +8,7 @@ const routeSchema = new mongoose.Schema({
     type: Boolean,
     default: false, // Inicializa como false
   },
+  order: { type: Number, required: true },
 });
 
 const Route = mongoose.model('Route', routeSchema);

@@ -5,7 +5,7 @@ const {
   createRoute,
   deleteRoutesByEventCode,
   updateVisitedStatus,
-  updateVisitedStatusByEvent,
+  resetVisitedStatusByEventCode,
 } = require('../controllers/routeController');
 
 const router = express.Router();
@@ -21,7 +21,9 @@ router.delete('/event/:code', deleteRoutesByEventCode);
 // Endpoint para actualizar un punto específico
 router.patch('/update-visited', updateVisitedStatus);
 
+router.patch('/reset-visited/:code', resetVisitedStatusByEventCode);
+
 // Endpoint para actualizar múltiples puntos basados en las ubicaciones del evento
-router.post('/event/:code/update-visited', updateVisitedStatusByEvent);
+// router.post('/event/:code/update-visited', updateVisitedStatusByEvent);
 
 module.exports = router;
