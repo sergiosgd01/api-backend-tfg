@@ -158,8 +158,8 @@ const editEvent = async (req, res) => {
     if (time !== undefined) event.time = time;
     if (status !== undefined) event.status = status;
     if (cancelledInfo !== undefined) event.cancelledInfo = cancelledInfo;
-    if (startDate !== undefined) event.startDate = new Date(startDate);
-    if (endDate !== undefined) event.endDate = new Date(endDate);
+    if (startDate !== undefined) event.startDate = startDate;
+    if (endDate !== undefined) event.endDate = endDate;
     if (organizationCode !== undefined) event.organizationCode = organizationCode;
 
     await event.save();
