@@ -114,7 +114,6 @@ const createEvent = async (req, res) => {
     res.status(201).json({ message: 'Evento creado exitosamente.', event: newEvent });
   } catch (error) {
     if (error.code === 11000 && error.keyValue?.code) {
-      // Manejar error de unicidad
       return res.status(400).json({ message: 'El código del evento ya existe. Por favor, intente nuevamente.' });
     }
     console.error('Error al crear el evento:', error);
@@ -125,7 +124,6 @@ const createEvent = async (req, res) => {
 const editEvent = async (req, res) => {
   const { eventCode } = req.params;
   const { 
-    code, 
     name, 
     postalCode, 
     time, 
@@ -141,17 +139,17 @@ const editEvent = async (req, res) => {
   }
 
   try {
-    const event = await Event.findByCode(eventCode);
+    const event = await Event.findOne({ code: eventCode });
     if (!event) {
       return res.status(404).json({ message: 'Evento no encontrado.' });
     }
 
-    if (code !== undefined) {
-      const existingEvent = await Event.findOne({ code, code: { $ne: eventCode } });
-      if (existingEvent) {
-        return res.status(400).json({ message: 'El código ya existe en la base de datos.' });
+    if (eventCode !== undefined) {
+      const existingEvent = await Event.findOne({ code: eventCode });
+      if (!existingEvent) {
+        return res.status(400).json({ message: 'El código no existe en la base de datos.' });
       }
-      event.code = code;
+      event.code = eventCode;
     }
 
     if (name !== undefined) event.name = name;
@@ -200,27 +198,27 @@ const changeStatusEvent = async (req, res) => {
   }
 };
 
-const getEventQRCode = async (req, res) => {
-  const { qrCode } = req.query;
+// const getEventQRCode = async (req, res) => {
+//   const { qrCode } = req.query;
 
-  try {
-    const event = await Event.findOne({ qrCode });
+//   try {
+//     const event = await Event.findOne({ qrCode });
 
-    if (event) {
-      res.status(200).json(event);
-    } else {
-      res.status(404).json({ message: 'Evento no encontrado.' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Error al obtener el evento con el código QR', error });
-  }
-}
+//     if (event) {
+//       res.status(200).json(event);
+//     } else {
+//       res.status(404).json({ message: 'Evento no encontrado.' });
+//     }
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error al obtener el evento con el código QR', error });
+//   }
+// }
 
 const deleteEvent = async (req, res) => {
   const eventCode = req.params.eventCode;
 
   try {
-    const event = await Event.findByIdAndDelete(eventCode);
+    const event = await Event.findOneAndDelete({ code: eventCode });
 
     if (event) {
       res.status(200).json({ message: 'El evento fue eliminado correctamente.', event });
@@ -239,7 +237,6 @@ module.exports = {
   getEventById,
   getEventByCode,
   changeStatusEvent,
-  getEventQRCode,
   createEvent, 
   editEvent, 
   deleteEvent
