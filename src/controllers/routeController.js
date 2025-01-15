@@ -24,13 +24,6 @@ const deleteRoute = async (req, res) => {
     const route = await Route.findByIdAndDelete(id);
 
     if (route) {
-      // Recalcular los valores de "order" después de eliminar un punto
-      const remainingRoutes = await Route.find({ code: route.code }).sort({ order: 1 });
-      for (let i = 0; i < remainingRoutes.length; i++) {
-        remainingRoutes[i].order = i;
-        await remainingRoutes[i].save();
-      }
-
       res.status(200).json({ message: 'Punto de la ruta eliminado correctamente.', route });
     } else {
       res.status(404).json({ message: 'No se encontró el punto de la ruta.' });
@@ -49,16 +42,11 @@ const createRoute = async (req, res) => {
   }
 
   try {
-    // Obtener el valor máximo de "order" para esta ruta
-    const lastRoutePoint = await Route.findOne({ code }).sort({ order: -1 });
-    const nextOrder = lastRoutePoint ? lastRoutePoint.order + 1 : 0;
-
     const route = new Route({
       code,
       latitude,
       longitude,
-      visited: false, // Aseguramos que este campo se establezca como false
-      order: nextOrder, // Asignamos el orden incremental
+      visited: false, 
     });
 
     await route.save();

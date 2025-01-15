@@ -14,7 +14,6 @@ const eventSchema = new mongoose.Schema({
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   image: { type: String, default: '' },
-  qrCode: { type: String, default: '' },
   icon: { type: String, default: '' },
   organizationCode: { type: Number, required: true },
 });

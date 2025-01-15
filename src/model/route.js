@@ -6,9 +6,8 @@ const routeSchema = new mongoose.Schema({
   longitude: Number,
   visited: {
     type: Boolean,
-    default: false, // Inicializa como false
+    default: false, 
   },
-  order: { type: Number, required: true },
 });
 
 const Route = mongoose.model('Route', routeSchema);
