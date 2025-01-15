@@ -5,25 +5,23 @@ const eventControlSchema = new mongoose.Schema({
     type: Number,
     unique: true,
     required: true,
-    min: 1,
-    max: 99999,
   },
   isTrackingEnabled: {
     type: Boolean,
     default: false,
   },
   updateFrequency: {
-    type: Number, // Milisegundos
+    type: Number, 
     required: true,
-    default: 60000, // Por defecto 60 segundos
+    default: 60000, 
   },
   accuracy: {
     type: Number,
-    default: 30, // Por defecto 30 metros
+    default: 30, 
   },
   lastUpdated: {
     type: Date,
-    default: Date.now, // Fecha de la última modificación
+    default: Date.now, 
   },
 });
 
