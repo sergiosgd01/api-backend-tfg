@@ -55,22 +55,22 @@ const getEventByCode = async (req, res) => {
   }
 };
 
-const checkCodeExists = async (req, res) => {
-  const { code } = req.params;
-  const { id } = req.query;
+// const checkCodeExists = async (req, res) => {
+//   const { code } = req.params;
+//   const { id } = req.query;
 
-  try {
-    const query = id
-      ? { code: Number(code), _id: { $ne: id } } 
-      : { code: Number(code) }; 
+//   try {
+//     const query = id
+//       ? { code: Number(code), _id: { $ne: id } } 
+//       : { code: Number(code) }; 
 
-    const exists = await Event.exists(query);
+//     const exists = await Event.exists(query);
 
-    res.status(200).json({ exists: !!exists });
-  } catch (error) {
-    res.status(500).json({ message: 'Error al verificar el código', error });
-  }
-};
+//     res.status(200).json({ exists: !!exists });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error al verificar el código', error });
+//   }
+// };
 
 const generateUniqueEventCode = async (postalCode) => {
   let code;
@@ -123,7 +123,7 @@ const createEvent = async (req, res) => {
 };
 
 const editEvent = async (req, res) => {
-  const { id } = req.params;
+  const { eventCode } = req.params;
   const { 
     code, 
     name, 
@@ -141,13 +141,13 @@ const editEvent = async (req, res) => {
   }
 
   try {
-    const event = await Event.findById(id);
+    const event = await Event.findByCode(eventCode);
     if (!event) {
       return res.status(404).json({ message: 'Evento no encontrado.' });
     }
 
     if (code !== undefined) {
-      const existingEvent = await Event.findOne({ code, _id: { $ne: id } });
+      const existingEvent = await Event.findOne({ code, code: { $ne: eventCode } });
       if (existingEvent) {
         return res.status(400).json({ message: 'El código ya existe en la base de datos.' });
       }
@@ -176,7 +176,7 @@ const editEvent = async (req, res) => {
 };
 
 const changeStatusEvent = async (req, res) => {
-  const { id } = req.params;
+  const { eventCode } = req.params;
   const { action, cancelledInfo } = req.body;
 
   if (action === undefined || cancelledInfo === undefined) {
@@ -184,7 +184,7 @@ const changeStatusEvent = async (req, res) => {
   }
 
   try {
-    const event = await Event.findOne({_id: id});
+    const event = await Event.findOne({code: eventCode});
 
     if (event) {
       event.status = action;
@@ -217,10 +217,10 @@ const getEventQRCode = async (req, res) => {
 }
 
 const deleteEvent = async (req, res) => {
-  const id = req.params.id;
+  const eventCode = req.params.eventCode;
 
   try {
-    const event = await Event.findByIdAndDelete(id);
+    const event = await Event.findByIdAndDelete(eventCode);
 
     if (event) {
       res.status(200).json({ message: 'El evento fue eliminado correctamente.', event });
