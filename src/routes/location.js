@@ -1,9 +1,7 @@
 const express = require('express');
 const { 
   getLocation, 
-  verifyDeviceId, 
   insertLocation, 
-  getLocationDorsal, 
   deleteLocation, 
   deleteLocationsByEventCode 
 } = require('../controllers/locationController');

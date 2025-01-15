@@ -96,10 +96,7 @@ const getRawLocationsByEventCode = async (req, res) => {
 
     const rawLocations = await RawLocation.find({ code }).sort({ timestamp: -1 });
 
-    if (!rawLocations.length) {
-      return res.status(404).json({ message: "No se encontraron ubicaciones para este evento." });
-    }
-
+    // En lugar de devolver un 404, devolvemos un array vacío con un 200
     res.status(200).json(rawLocations);
   } catch (error) {
     console.error("Error al recuperar ubicaciones por código de evento:", error);
