@@ -172,7 +172,6 @@ const editEvent = async (req, res) => {
     res.status(500).json({ message: 'Error al actualizar el evento', error });
   }
 };
-
 const changeStatusEvent = async (req, res) => {
   const { eventCode } = req.params;
   const { action, cancelledInfo } = req.body;
@@ -197,22 +196,6 @@ const changeStatusEvent = async (req, res) => {
     res.status(500).json({ message: 'Error al cancelar el evento', error });
   }
 };
-
-// const getEventQRCode = async (req, res) => {
-//   const { qrCode } = req.query;
-
-//   try {
-//     const event = await Event.findOne({ qrCode });
-
-//     if (event) {
-//       res.status(200).json(event);
-//     } else {
-//       res.status(404).json({ message: 'Evento no encontrado.' });
-//     }
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error al obtener el evento con el código QR', error });
-//   }
-// }
 
 const deleteEvent = async (req, res) => {
   const eventCode = req.params.eventCode;
