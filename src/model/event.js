@@ -5,8 +5,6 @@ const eventSchema = new mongoose.Schema({
     type: Number,
     unique: true,
     required: true, 
-    min: 1,
-    max: 99999, 
   },
   name: { type: String, required: true },
   postalCode: { type: String, required: true },

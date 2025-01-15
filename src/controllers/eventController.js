@@ -72,11 +72,12 @@ const checkCodeExists = async (req, res) => {
   }
 };
 
-const generateUniqueEventCode = async () => {
+const generateUniqueEventCode = async (postalCode) => {
   let code;
   let exists = true;
   do {
-    code = Math.floor(Math.random() * (99999 - 1 + 1)) + 1; // Genera un número aleatorio entre 1 y 99999
+    const randomNumber = Math.floor(Math.random() * 90000) + 10000; 
+    code = parseInt(`${randomNumber}${postalCode}`, 10); 
     exists = await Event.exists({ code });
   } while (exists);
   return code;
@@ -90,7 +91,7 @@ const createEvent = async (req, res) => {
   }
 
   try {
-    const code = await generateUniqueEventCode(); // Generar código único
+    const code = await generateUniqueEventCode(postalCode); // Generar código único
 
     const newEvent = new Event({
       code,
