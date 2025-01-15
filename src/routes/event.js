@@ -3,10 +3,8 @@ const {
   getEvents, 
   getEventsOrganization, 
   getEventByCode, 
-  checkCodeExists, 
   getEventById, 
   changeStatusEvent, 
-  getEventQRCode, 
   createEvent, 
   editEvent, 
   deleteEvent 
@@ -16,16 +14,14 @@ const router = express.Router();
 
 router.get('/', getEvents); 
 router.get('/getEventById/:id', getEventById); 
-// router.get('/getEventQRCode', getEventQRCode); 
-router.get('/checkCodeExists/:code', checkCodeExists);
 router.get('/getEventsOrganization/:organizationCode', getEventsOrganization); 
-router.get('/:code', getEventByCode); 
+router.get('/:eventCode', getEventByCode); 
 
-router.put('/cancel/:id', changeStatusEvent);
-router.put('/editEvent/:id', editEvent);
+router.put('/cancel/:eventCode', changeStatusEvent);
+router.put('/editEvent/:eventCode', editEvent);
 
 router.post('/', createEvent);
 
-router.delete('/:id', deleteEvent);
+router.delete('/:eventCode', deleteEvent);
 
 module.exports = router;

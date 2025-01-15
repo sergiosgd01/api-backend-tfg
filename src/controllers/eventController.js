@@ -40,10 +40,10 @@ const getEventById = async (req, res) => {
 };
 
 const getEventByCode = async (req, res) => {
-  const { code } = req.params;
+  const { eventCode } = req.params;
 
   try {
-    const event = await Event.findOne({ code: Number(code) }); 
+    const event = await Event.findOne({ code: Number(eventCode) }); 
 
     if (event) {
       res.status(200).json(event);
@@ -238,7 +238,6 @@ module.exports = {
   getEventsOrganization,
   getEventById,
   getEventByCode,
-  checkCodeExists,
   changeStatusEvent,
   getEventQRCode,
   createEvent, 
