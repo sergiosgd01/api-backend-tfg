@@ -1,16 +1,21 @@
 const RawLocation = require('../model/rawLocation');
 const Location = require('../model/location');
+const EventControl = require('../model/eventControl');
 
-// Insertar ubicación sin procesar
 const insertRawLocation = async (req, res) => {
   const { location, code, deviceID } = req.body; // Ahora incluimos deviceID en el cuerpo de la solicitud
 
   try {
     console.log("Nueva ubicación recibida:", location);
 
+    // Obtener la configuración del evento para determinar el valor de accuracy permitido
+    const eventControl = await EventControl.findOne({ eventCode: code });
+
+    const allowedAccuracy = eventControl ? eventControl.accuracy : 30;
+
     // Verifica primero si la precisión es válida
-    if (location.accuracy > 30) {
-      console.log("Ubicación no válida debido a precisión alta.");
+    if (location.accuracy > allowedAccuracy) {
+      console.log(`Ubicación no válida debido a precisión alta. Permitida: ${allowedAccuracy}`);
 
       // Inserta directamente en RawLocation con el error correspondiente
       const newRawLocation = new RawLocation({
