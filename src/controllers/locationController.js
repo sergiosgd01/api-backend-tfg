@@ -15,13 +15,14 @@ const getLocation = async (req, res) => {
 };
 
 const insertLocation = async (req, res) => {
-  const { location } = req.body;
+  const { location, code, deviceID } = req.body;
 
   try {
-    const newLocation = new Location(location);
+    // Registrar la ubicación
+    const newLocation = new Location({ ...location, code, deviceID });
     await newLocation.save();
 
-    res.status(201).json({ success: true, location });
+    res.status(201).json({ success: true, location: newLocation });
   } catch (error) {
     console.error('Error al insertar la ubicación:', error);
     res.status(500).json({ message: 'Error interno del servidor.' });

@@ -8,6 +8,7 @@ const organizationRoutes = require('./routes/organization');
 const eventRoutes = require('./routes/event');
 const locationRoutes = require('./routes/location');
 const routeRoutes = require('./routes/route');
+const deviceRoutes =  require('./routes/device');
 const serviceRoutes = require('./routes/service');
 const serviceTypesRoutes = require('./routes/serviceTypes');
 const rawLocation = require('./routes/rawLocation');
@@ -25,6 +26,8 @@ app.use('/api/organizations', organizationRoutes);
 app.use('/api/events', eventRoutes);
 
 app.use('/api/locations', locationRoutes);
+
+app.use('/api/device', deviceRoutes);
 
 app.use('/api/route', routeRoutes);
 
