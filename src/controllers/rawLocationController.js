@@ -3,7 +3,7 @@ const Location = require('../model/location');
 
 // Insertar ubicación sin procesar
 const insertRawLocation = async (req, res) => {
-  const { location } = req.body;
+  const { location, code, deviceID } = req.body; // Ahora incluimos deviceID en el cuerpo de la solicitud
 
   try {
     console.log("Nueva ubicación recibida:", location);
@@ -15,6 +15,8 @@ const insertRawLocation = async (req, res) => {
       // Inserta directamente en RawLocation con el error correspondiente
       const newRawLocation = new RawLocation({
         ...location,
+        code,
+        deviceID, // Agregamos el campo deviceID
         reason: "La ubicación no es precisa.",
         errorCode: 2, // Baja precisión
         processed: true,
@@ -29,11 +31,11 @@ const insertRawLocation = async (req, res) => {
     }
 
     // Busca la última ubicación antes de insertar la nueva
-    const lastRawLocation = await RawLocation.findOne({ code: location.code }).sort({ timestamp: -1 });
+    const lastRawLocation = await RawLocation.findOne({ code, deviceID }).sort({ timestamp: -1 });
     console.log("Última ubicación sin procesar encontrada:", lastRawLocation);
 
     // Inserta la nueva ubicación en RawLocation
-    const newRawLocation = new RawLocation({ ...location, reason: null });
+    const newRawLocation = new RawLocation({ ...location, code, deviceID, reason: null });
     await newRawLocation.save();
 
     // Verifica si la nueva ubicación es válida para insertar en Location
@@ -50,7 +52,8 @@ const insertRawLocation = async (req, res) => {
         longitude: location.longitude,
         accuracy: location.accuracy,
         timestamp: location.timestamp,
-        code: location.code,
+        code,
+        deviceID, // Agregamos el campo deviceID
       });
 
       await newLocation.save();
@@ -132,5 +135,5 @@ const deleteRawLocationsByEventCode = async (req, res) => {
 module.exports = {
   insertRawLocation,
   getRawLocationsByEventCode,
-  deleteRawLocationsByEventCode, 
+  deleteRawLocationsByEventCode,
 };
