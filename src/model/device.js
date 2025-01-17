@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const deviceSchema = new mongoose.Schema({
   deviceID: { type: String, required: true }, // Ya no es único globalmente
-  eventCode: { type: Number, required: true, index: true }, // Asociado al evento
+  eventCode: { type: Number, required: true }, // Asociado al evento
   name: { type: String, required: true }, // Nombre del dispositivo
   order: { type: Number, required: false }, // Orden dentro del evento
   color: { type: String, required: false, default: '#000000' }, // Color para visualización

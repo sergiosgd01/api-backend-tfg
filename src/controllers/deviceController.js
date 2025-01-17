@@ -1,8 +1,27 @@
 const Device = require('../model/device');
 const Event = require('../model/event');
 
-const verifyOrCreateDevice = async (req, res) => {
-  const { deviceID, eventCode, name, order, color } = req.body;
+// Verificar si un dispositivo existe para un eventCode
+const verifyDevice = async (req, res) => {
+  const { deviceID, eventCode } = req.query;
+
+  try {
+    const device = await Device.findOne({ deviceID, eventCode });
+
+    if (device) {
+      return res.status(200).json({ exists: true, device });
+    } else {
+      return res.status(200).json({ exists: false, message: 'Dispositivo no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error verificando dispositivo:', error);
+    return res.status(500).json({ message: 'Error interno del servidor', error });
+  }
+};
+
+// Crear un nuevo dispositivo
+const createDevice = async (req, res) => {
+  const { deviceID, eventCode, name, color } = req.body;
 
   try {
     // Verificar si el evento existe
@@ -11,29 +30,48 @@ const verifyOrCreateDevice = async (req, res) => {
       return res.status(404).json({ message: 'Evento no encontrado' });
     }
 
-    // Verificar si el dispositivo ya existe para ese eventCode
-    let device = await Device.findOne({ deviceID, eventCode });
-    if (!device) {
-      // Crear un nuevo dispositivo si no existe
-      device = new Device({ deviceID, eventCode, name, order, color });
-      await device.save();
-    }
+    // Obtener el número actual de dispositivos para el evento
+    const deviceCount = await Device.countDocuments({ eventCode });
 
-    // Devolver el dispositivo existente o recién creado
-    return res.status(200).json({ success: true, device });
+    // Asignar automáticamente el valor de "order"
+    const order = deviceCount + 1;
+
+    // Crear un nuevo dispositivo
+    const device = new Device({ deviceID, eventCode, name, order, color });
+    await device.save();
+
+    return res.status(201).json({ success: true, device });
   } catch (error) {
-    console.error('Error en la verificación o creación del dispositivo:', error);
+    console.error('Error creando dispositivo:', error);
 
-    // Manejo de errores específicos para evitar "Internal Server Error"
     if (error.name === 'ValidationError') {
       return res.status(400).json({ message: 'Error de validación en los datos enviados', details: error.errors });
     }
 
-    // Respuesta para cualquier otro error desconocido
+    return res.status(500).json({ message: 'Error interno del servidor', error });
+  }
+};
+
+// Obtener todos los dispositivos por eventCode
+const getDevicesByEventCode = async (req, res) => {
+  const { eventCode } = req.params;
+
+  try {
+    const devices = await Device.find({ eventCode });
+
+    if (devices.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron dispositivos para este evento' });
+    }
+
+    return res.status(200).json({ devices });
+  } catch (error) {
+    console.error('Error obteniendo dispositivos por eventCode:', error);
     return res.status(500).json({ message: 'Error interno del servidor', error });
   }
 };
 
 module.exports = {
-  verifyOrCreateDevice,
+  verifyDevice,
+  createDevice,
+  getDevicesByEventCode,
 };
