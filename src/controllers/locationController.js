@@ -14,6 +14,35 @@ const getLocation = async (req, res) => {
   }
 };
 
+const getLocationsByDeviceId = async (req, res) => {
+  const { deviceID, code } = req.query;
+
+  try {
+    // Verifica que los parámetros estén presentes
+    if (!deviceID || !code) {
+      return res.status(400).json({ message: 'Faltan parámetros requeridos: deviceID o code.' });
+    }
+
+    // Convertir `code` a un número y validar
+    const numericCode = Number(code);
+    if (isNaN(numericCode)) {
+      return res.status(400).json({ message: 'El parámetro code debe ser un número válido.' });
+    }
+
+    // Consultar las ubicaciones
+    const locations = await Location.find({ deviceID, code: numericCode });
+
+    if (locations.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron ubicaciones para este deviceID en este evento.' });
+    }
+
+    res.status(200).json(locations);
+  } catch (error) {
+    console.error('Error al obtener ubicaciones por deviceID y código:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+  }
+};
+
 const insertLocation = async (req, res) => {
   const { location, code, deviceID } = req.body;
 
@@ -104,6 +133,7 @@ const getLocationDorsal = async (req, res) => {
 
 module.exports = {
   getLocation,
+  getLocationsByDeviceId,
   insertLocation,
   verifyDeviceId,
   getLocationDorsal, 

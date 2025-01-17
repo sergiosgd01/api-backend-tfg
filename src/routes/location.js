@@ -1,14 +1,14 @@
 const express = require('express');
 const { 
   getLocation, 
+  getLocationsByDeviceId,
   insertLocation, 
   deleteLocation, 
   deleteLocationsByEventCode 
 } = require('../controllers/locationController');
 const router = express.Router();
 
-// router.get('/verifyDeviceId', verifyDeviceId);
-// router.get('/getLocationDorsal', getLocationDorsal);
+router.get('/device', getLocationsByDeviceId);
 router.get('/:code', getLocation);
 
 router.post('/', insertLocation);
