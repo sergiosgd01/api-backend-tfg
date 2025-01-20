@@ -17,6 +17,35 @@ const getRouteByEventCode = async (req, res) => {
   }
 };
 
+const getRouteByDeviceId = async (req, res) => {
+  const { deviceID, code } = req.query;
+
+  try {
+    // Verifica que los parámetros estén presentes
+    if (!deviceID || !code) {
+      return res.status(400).json({ message: 'Faltan parámetros requeridos: deviceID o code.' });
+    }
+
+    // Convertir `code` a un número y validar
+    const numericCode = Number(code);
+    if (isNaN(numericCode)) {
+      return res.status(400).json({ message: 'El parámetro code debe ser un número válido.' });
+    }
+
+    // Consultar las ubicaciones
+    const route = await Route.find({ deviceID, code: numericCode });
+
+    if (route.length === 0) {
+      return res.status(404).json({ message: 'No se encontró ruta para este deviceID en este evento.' });
+    }
+
+    res.status(200).json(route);
+  } catch (error) {
+    console.error('Error al obtener la ruta por deviceID y código:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+  }
+};
+
 const deleteRoute = async (req, res) => {
   const id = req.params.id;
 
@@ -35,9 +64,9 @@ const deleteRoute = async (req, res) => {
 };
 
 const createRoute = async (req, res) => {
-  const { code, latitude, longitude } = req.body;
+  const { code, latitude, longitude, deviceID } = req.body;
 
-  if (!code || !latitude || !longitude) {
+  if (!code || !latitude || !longitude || !deviceID) {
     return res.status(400).json({ message: 'Faltan datos obligatorios para insertar el punto de la ruta.' });
   }
 
@@ -46,7 +75,8 @@ const createRoute = async (req, res) => {
       code,
       latitude,
       longitude,
-      visited: false, 
+      visited: false,
+      deviceID 
     });
 
     await route.save();
@@ -124,6 +154,7 @@ const resetVisitedStatusByEventCode = async (req, res) => {
 
 module.exports = {
   getRouteByEventCode,
+  getRouteByDeviceId,
   deleteRoute,
   createRoute,
   deleteRoutesByEventCode,

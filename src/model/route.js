@@ -8,6 +8,7 @@ const routeSchema = new mongoose.Schema({
     type: Boolean,
     default: false, 
   },
+  deviceID: { type: String, required: true, index: true },
 });
 
 const Route = mongoose.model('Route', routeSchema);

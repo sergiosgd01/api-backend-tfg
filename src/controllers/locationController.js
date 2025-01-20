@@ -115,28 +115,28 @@ const verifyDeviceId = async (req, res) => {
   }
 };
 
-const getLocationDorsal = async (req, res) => {
-  const { code, dorsal } = req.query;
+// const getLocationDorsal = async (req, res) => {
+//   const { code, dorsal } = req.query;
 
-  try {
-    const location = await Location.findOne({ dorsal, code });
+//   try {
+//     const location = await Location.findOne({ dorsal, code });
 
-    if (location) {
-      return res.status(200).json({ success: true, location: location });
-    }
+//     if (location) {
+//       return res.status(200).json({ success: true, location: location });
+//     }
 
-    return res.status(200).json({ success: false, message: 'No se ha encontrado ninguna ubicacion con este dorsal' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error interno del servidor.' });
-  }
-};
+//     return res.status(200).json({ success: false, message: 'No se ha encontrado ninguna ubicacion con este dorsal' });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error interno del servidor.' });
+//   }
+// };
 
 module.exports = {
   getLocation,
   getLocationsByDeviceId,
   insertLocation,
   verifyDeviceId,
-  getLocationDorsal, 
+  // getLocationDorsal, 
   deleteLocation,
   deleteLocationsByEventCode,
 };

@@ -1,6 +1,7 @@
 const express = require('express');
 const {
   getRouteByEventCode,
+  getRouteByDeviceId,
   deleteRoute,
   createRoute,
   deleteRoutesByEventCode,
@@ -9,6 +10,8 @@ const {
 } = require('../controllers/routeController');
 
 const router = express.Router();
+
+router.get('/device', getRouteByDeviceId);
 
 router.get('/:code', getRouteByEventCode);
 
