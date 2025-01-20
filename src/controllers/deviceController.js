@@ -52,6 +52,36 @@ const createDevice = async (req, res) => {
   }
 };
 
+// Editar datos de un dispositivo
+const editDevice = async (req, res) => {
+  const { deviceID, eventCode } = req.params;
+  const { name, color, order } = req.body;
+
+  try {
+    // Encontrar y actualizar el dispositivo
+    const updatedDevice = await Device.findOneAndUpdate(
+      { deviceID, eventCode },
+      { name, color, order },
+      { new: true, runValidators: true } // Devuelve el documento actualizado y aplica validaciones
+    );
+
+    if (!updatedDevice) {
+      return res.status(404).json({ message: 'Dispositivo no encontrado' });
+    }
+
+    return res.status(200).json({ success: true, device: updatedDevice });
+  } catch (error) {
+    console.error('Error editando dispositivo:', error);
+
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Error de validación en los datos enviados', details: error.errors });
+    }
+
+    return res.status(500).json({ message: 'Error interno del servidor', error });
+  }
+};
+
+
 // Obtener todos los dispositivos por eventCode
 const getDevicesByEventCode = async (req, res) => {
   const { eventCode } = req.params;
@@ -70,8 +100,29 @@ const getDevicesByEventCode = async (req, res) => {
   }
 };
 
+// Obtener dispositivos por deviceID
+const getDevicesByDeviceID = async (req, res) => {
+  const { deviceID } = req.params;
+
+  try {
+    const devices = await Device.find({ deviceID });
+
+    if (devices.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron dispositivos con este ID' });
+    }
+
+    return res.status(200).json({ devices });
+  } catch (error) {
+    console.error('Error obteniendo dispositivos por deviceID:', error);
+    return res.status(500).json({ message: 'Error interno del servidor', error });
+  }
+};
+
+
 module.exports = {
   verifyDevice,
   createDevice,
+  editDevice,
   getDevicesByEventCode,
+  getDevicesByDeviceID,
 };
