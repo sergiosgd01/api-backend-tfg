@@ -6,6 +6,7 @@ const {
   getDevicesByEventCode,
   getDevicesByDeviceID,
   editDevice,
+  getDeviceByDeviceIDEventCode, // Importamos la nueva función
 } = require('../controllers/deviceController');
 
 // Ruta para verificar si un dispositivo existe
@@ -19,6 +20,9 @@ router.get('/devices-by-event/:eventCode', getDevicesByEventCode);
 
 // Ruta para obtener todos los dispositivos por deviceID
 router.get('/devices-by-id/:deviceID', getDevicesByDeviceID);
+
+// Ruta para obtener un dispositivo por deviceID y eventCode
+router.get('/:deviceID/:eventCode', getDeviceByDeviceIDEventCode);
 
 // Ruta para editar un dispositivo
 router.put('/edit/:deviceID/:eventCode', editDevice);

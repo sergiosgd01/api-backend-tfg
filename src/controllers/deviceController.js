@@ -118,6 +118,23 @@ const getDevicesByDeviceID = async (req, res) => {
   }
 };
 
+// Obtener dispositivo por deviceID y eventCode
+const getDeviceByDeviceIDEventCode = async (req, res) => {
+  const { deviceID, eventCode } = req.params;
+
+  try {
+    const device = await Device.findOne({ deviceID, eventCode });
+
+    if (!device) {
+      return res.status(404).json({ message: 'No se encontró un dispositivo con este ID y código de evento' });
+    }
+
+    return res.status(200).json({ device });
+  } catch (error) {
+    console.error('Error obteniendo dispositivo por deviceID y eventCode:', error);
+    return res.status(500).json({ message: 'Error interno del servidor', error });
+  }
+};
 
 module.exports = {
   verifyDevice,
@@ -125,4 +142,5 @@ module.exports = {
   editDevice,
   getDevicesByEventCode,
   getDevicesByDeviceID,
+  getDeviceByDeviceIDEventCode,
 };
