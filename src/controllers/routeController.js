@@ -17,7 +17,7 @@ const getRouteByEventCode = async (req, res) => {
   }
 };
 
-const getRouteByDeviceId = async (req, res) => {
+const getRouteByEventCodeDeviceID = async (req, res) => {
   const { deviceID, code } = req.query;
 
   try {
@@ -46,7 +46,7 @@ const getRouteByDeviceId = async (req, res) => {
   }
 };
 
-const deleteRoute = async (req, res) => {
+const deleteRoutePoint = async (req, res) => {
   const id = req.params.id;
 
   try {
@@ -63,7 +63,7 @@ const deleteRoute = async (req, res) => {
   }
 };
 
-const createRoute = async (req, res) => {
+const createRoutePoint = async (req, res) => {
   const { code, latitude, longitude, deviceID } = req.body;
 
   if (!code || !latitude || !longitude || !deviceID) {
@@ -88,26 +88,27 @@ const createRoute = async (req, res) => {
   }
 };
 
-const deleteRoutesByEventCode = async (req, res) => {
+const deleteRoutesByEventCodeDeviceID = async (req, res) => {
   const code = Number(req.params.code);
+  const deviceId = req.params.deviceId;
 
   try {
-    console.log(`Eliminando todas las rutas para el evento con código: ${code}`);
+    console.log(`Eliminando todas las rutas para el evento con código: ${code} y deviceId: ${deviceId}`);
 
-    const result = await Route.deleteMany({ code });
+    const result = await Route.deleteMany({ code, deviceId });
 
     if (result.deletedCount === 0) {
       return res.status(404).json({
-        message: 'No se encontraron rutas para este evento.',
+        message: 'No se encontraron rutas para este evento y deviceId.',
       });
     }
 
     res.status(200).json({
       success: true,
-      message: `Se eliminaron ${result.deletedCount} rutas del evento con código: ${code}.`,
+      message: `Se eliminaron ${result.deletedCount} rutas del evento con código: ${code} y deviceId: ${deviceId}.`,
     });
   } catch (error) {
-    console.error('Error al eliminar las rutas por código de evento:', error);
+    console.error('Error al eliminar las rutas por código de evento y deviceId:', error);
     res.status(500).json({ message: 'Error interno del servidor.' });
   }
 };
@@ -154,10 +155,10 @@ const resetVisitedStatusByEventCode = async (req, res) => {
 
 module.exports = {
   getRouteByEventCode,
-  getRouteByDeviceId,
-  deleteRoute,
-  createRoute,
-  deleteRoutesByEventCode,
+  getRouteByEventCodeDeviceID,
+  deleteRoutePoint,
+  createRoutePoint,
+  deleteRoutesByEventCodeDeviceID,
   updateVisitedStatus,
   resetVisitedStatusByEventCode,
 };

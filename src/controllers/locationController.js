@@ -1,6 +1,6 @@
 const Location = require('../model/location'); 
 
-const getLocation = async (req, res) => {
+const getLocationByEventCode = async (req, res) => {
   const code = Number(req.params.code);
 
   try {
@@ -14,7 +14,7 @@ const getLocation = async (req, res) => {
   }
 };
 
-const getLocationsByDeviceId = async (req, res) => {
+const getLocationsByEventCodeDeviceID = async (req, res) => {
   const { deviceID, code } = req.query;
 
   try {
@@ -133,8 +133,8 @@ const verifyDeviceId = async (req, res) => {
 // };
 
 module.exports = {
-  getLocation,
-  getLocationsByDeviceId,
+  getLocationByEventCode,
+  getLocationsByEventCodeDeviceID,
   insertLocation,
   verifyDeviceId,
   // getLocationDorsal, 

@@ -1,25 +1,25 @@
 const express = require('express');
 const {
   getRouteByEventCode,
-  getRouteByDeviceId,
-  deleteRoute,
-  createRoute,
-  deleteRoutesByEventCode,
+  getRouteByEventCodeDeviceID,
+  deleteRoutePoint,
+  createRoutePoint,
+  deleteRoutesByEventCodeDeviceID,
   updateVisitedStatus,
   resetVisitedStatusByEventCode,
 } = require('../controllers/routeController');
 
 const router = express.Router();
 
-router.get('/device', getRouteByDeviceId);
+router.get('/device', getRouteByEventCodeDeviceID);
 
 router.get('/:code', getRouteByEventCode);
 
-router.post('/', createRoute);
+router.post('/', createRoutePoint);
 
-router.delete('/:id', deleteRoute);
+router.delete('/:id', deleteRoutePoint);
 
-router.delete('/event/:code', deleteRoutesByEventCode);
+router.delete('/event/:code/device/:deviceId', deleteRoutesByEventCodeDeviceID);
 
 router.patch('/update-visited', updateVisitedStatus);
 

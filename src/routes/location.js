@@ -1,15 +1,15 @@
 const express = require('express');
 const { 
-  getLocation, 
-  getLocationsByDeviceId,
+  getLocationByEventCode, 
+  getLocationsByEventCodeDeviceID,
   insertLocation, 
   deleteLocation, 
   deleteLocationsByDeviceAndEvent 
 } = require('../controllers/locationController');
 const router = express.Router();
 
-router.get('/device', getLocationsByDeviceId);
-router.get('/:code', getLocation);
+router.get('/device', getLocationsByEventCodeDeviceID);
+router.get('/:code', getLocationByEventCode);
 
 router.post('/', insertLocation);
 
