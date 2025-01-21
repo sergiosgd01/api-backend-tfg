@@ -75,26 +75,27 @@ const deleteLocation = async (req, res) => {
   }
 };
 
-const deleteLocationsByEventCode = async (req, res) => {
-  const code = Number(req.params.code);
+const deleteLocationsByDeviceAndEvent = async (req, res) => {
+  const eventCode = Number(req.params.eventCode);
+  const deviceID = req.params.deviceID;
 
   try {
-    console.log(`Eliminando todas las ubicaciones para el evento con código: ${code}`);
+    console.log(`Eliminando todas las ubicaciones para el evento con código: ${eventCode} y dispositivo: ${deviceID}`);
 
-    const result = await Location.deleteMany({ code });
+    const result = await Location.deleteMany({ code: eventCode, deviceID });
 
     if (result.deletedCount === 0) {
       return res.status(404).json({
-        message: 'No se encontraron ubicaciones para este evento.',
+        message: 'No se encontraron ubicaciones para este evento y dispositivo.',
       });
     }
 
     res.status(200).json({
       success: true,
-      message: `Se eliminaron ${result.deletedCount} ubicaciones del evento con código: ${code}.`,
+      message: `Se eliminaron ${result.deletedCount} ubicaciones del dispositivo ${deviceID} en el evento con código: ${eventCode}.`,
     });
   } catch (error) {
-    console.error('Error al eliminar las ubicaciones por código de evento:', error);
+    console.error('Error al eliminar las ubicaciones por código de evento y dispositivo:', error);
     res.status(500).json({ message: 'Error interno del servidor.' });
   }
 };
@@ -138,5 +139,5 @@ module.exports = {
   verifyDeviceId,
   // getLocationDorsal, 
   deleteLocation,
-  deleteLocationsByEventCode,
+  deleteLocationsByDeviceAndEvent,
 };

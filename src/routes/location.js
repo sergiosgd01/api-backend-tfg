@@ -4,7 +4,7 @@ const {
   getLocationsByDeviceId,
   insertLocation, 
   deleteLocation, 
-  deleteLocationsByEventCode 
+  deleteLocationsByDeviceAndEvent 
 } = require('../controllers/locationController');
 const router = express.Router();
 
@@ -14,6 +14,6 @@ router.get('/:code', getLocation);
 router.post('/', insertLocation);
 
 router.delete('/:id', deleteLocation);
-router.delete('/event/:code', deleteLocationsByEventCode);
+router.delete('/event/:eventCode/device/:deviceID', deleteLocationsByDeviceAndEvent); 
 
 module.exports = router;
