@@ -19,7 +19,7 @@ router.post('/', createRoutePoint);
 
 router.delete('/:id', deleteRoutePoint);
 
-router.delete('/event/:code/device/:deviceId', deleteRoutesByEventCodeDeviceID);
+router.delete('/event/:code/device/:deviceID', deleteRoutesByEventCodeDeviceID);
 
 router.patch('/update-visited', updateVisitedStatus);
 

@@ -90,25 +90,25 @@ const createRoutePoint = async (req, res) => {
 
 const deleteRoutesByEventCodeDeviceID = async (req, res) => {
   const code = Number(req.params.code);
-  const deviceId = req.params.deviceId;
+  const deviceID = req.params.deviceID;
 
   try {
-    console.log(`Eliminando todas las rutas para el evento con código: ${code} y deviceId: ${deviceId}`);
+    console.log(`Eliminando todas las rutas para el evento con código: ${code} y deviceID: ${deviceID}`);
 
-    const result = await Route.deleteMany({ code, deviceId });
+    const result = await Route.deleteMany({ code, deviceID });
 
     if (result.deletedCount === 0) {
       return res.status(404).json({
-        message: 'No se encontraron rutas para este evento y deviceId.',
+        message: 'No se encontraron rutas para este evento y deviceID.',
       });
     }
 
     res.status(200).json({
       success: true,
-      message: `Se eliminaron ${result.deletedCount} rutas del evento con código: ${code} y deviceId: ${deviceId}.`,
+      message: `Se eliminaron ${result.deletedCount} rutas del evento con código: ${code} y deviceID: ${deviceID}.`,
     });
   } catch (error) {
-    console.error('Error al eliminar las rutas por código de evento y deviceId:', error);
+    console.error('Error al eliminar las rutas por código de evento y deviceID:', error);
     res.status(500).json({ message: 'Error interno del servidor.' });
   }
 };
