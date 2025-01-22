@@ -33,7 +33,8 @@ const getLocationsByEventCodeDeviceID = async (req, res) => {
     const locations = await Location.find({ deviceID, code: numericCode });
 
     if (locations.length === 0) {
-      return res.status(404).json({ message: 'No se encontraron ubicaciones para este deviceID en este evento.' });
+      // Devolver 200 con mensaje y array vacío
+      return res.status(200).json({ message: 'No se encontraron ubicaciones para este dispositivo en este evento.', locations: [] });
     }
 
     res.status(200).json(locations);

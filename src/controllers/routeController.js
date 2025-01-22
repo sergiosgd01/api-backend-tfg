@@ -36,7 +36,8 @@ const getRouteByEventCodeDeviceID = async (req, res) => {
     const route = await Route.find({ deviceID, code: numericCode });
 
     if (route.length === 0) {
-      return res.status(404).json({ message: 'No se encontró ruta para este deviceID en este evento.' });
+      // En lugar de 404, devuelve un estado 200 con un mensaje informativo
+      return res.status(200).json({ message: 'No hay ubicaciones para este dispositivo en este evento.', route: [] });
     }
 
     res.status(200).json(route);
