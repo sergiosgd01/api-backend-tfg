@@ -28,6 +28,6 @@ router.get('/:deviceID/:eventCode', getDeviceByDeviceIDEventCode);
 // Ruta para editar un dispositivo
 router.put('/edit/:deviceID/:eventCode', editDevice);
 
-router.delete('/delete/:id', deleteDeviceById);
+router.delete('/:id', deleteDeviceById);
 
 module.exports = router;
