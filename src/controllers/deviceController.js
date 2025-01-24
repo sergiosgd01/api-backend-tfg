@@ -81,22 +81,18 @@ const editDevice = async (req, res) => {
   }
 };
 
-
 // Obtener todos los dispositivos por eventCode
 const getDevicesByEventCode = async (req, res) => {
   const { eventCode } = req.params;
-
   try {
     const devices = await Device.find({ eventCode });
-
     if (devices.length === 0) {
-      return res.status(404).json({ message: 'No se encontraron dispositivos para este evento' });
+      return res.status(200).json({ message: 'No se encontraron dispositivos para este eventCode.', devices: [] });
     }
-
-    return res.status(200).json({ devices });
+    res.status(200).json(devices);
   } catch (error) {
-    console.error('Error obteniendo dispositivos por eventCode:', error);
-    return res.status(500).json({ message: 'Error interno del servidor', error });
+    console.error('Error al obtener dispositivos por eventCode:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
   }
 };
 
@@ -121,20 +117,18 @@ const getDevicesByDeviceID = async (req, res) => {
 // Obtener dispositivo por deviceID y eventCode
 const getDeviceByDeviceIDEventCode = async (req, res) => {
   const { deviceID, eventCode } = req.params;
-
   try {
     const device = await Device.findOne({ deviceID, eventCode });
-
     if (!device) {
-      return res.status(404).json({ message: 'No se encontró un dispositivo con este ID y código de evento' });
+      return res.status(200).json({ message: 'No se encontró dispositivo para este deviceID y eventCode.', devices: [] });
     }
-
-    return res.status(200).json({ device });
+    res.status(200).json(device);
   } catch (error) {
-    console.error('Error obteniendo dispositivo por deviceID y eventCode:', error);
-    return res.status(500).json({ message: 'Error interno del servidor', error });
+    console.error('Error al obtener dispositivo por deviceID y eventCode:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
   }
 };
+// .
 
 const deleteDeviceById = async (req, res) => {
   const { id } = req.params;
