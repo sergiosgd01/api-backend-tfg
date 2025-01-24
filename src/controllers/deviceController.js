@@ -136,6 +136,20 @@ const getDeviceByDeviceIDEventCode = async (req, res) => {
   }
 };
 
+const deleteDeviceById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const device = await Device.findByIdAndDelete(id);
+    if (!device) {
+      return res.status(404).json({ message: 'Dispositivo no encontrado.' });
+    }
+    res.status(200).json({ message: 'Dispositivo eliminado correctamente.', device });
+  } catch (error) {
+    console.error('Error al eliminar el dispositivo:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+  }
+};
+
 module.exports = {
   verifyDevice,
   createDevice,
@@ -143,4 +157,5 @@ module.exports = {
   getDevicesByEventCode,
   getDevicesByDeviceID,
   getDeviceByDeviceIDEventCode,
+  deleteDeviceById,
 };
