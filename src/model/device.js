@@ -6,6 +6,7 @@ const deviceSchema = new mongoose.Schema({
   name: { type: String, required: true }, // Nombre del dispositivo
   order: { type: Number, required: false }, // Orden dentro del evento
   color: { type: String, required: false, default: '#000000' }, // Color para visualización
+  icon: { type: String, default: '' },
 });
 
 // Índice único para la combinación de deviceID y eventCode

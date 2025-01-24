@@ -21,7 +21,7 @@ const verifyDevice = async (req, res) => {
 
 // Crear un nuevo dispositivo
 const createDevice = async (req, res) => {
-  const { deviceID, eventCode, name, color } = req.body;
+  const { deviceID, eventCode, name, color, icon } = req.body;
 
   try {
     // Verificar si el evento existe
@@ -37,7 +37,7 @@ const createDevice = async (req, res) => {
     const order = deviceCount + 1;
 
     // Crear un nuevo dispositivo
-    const device = new Device({ deviceID, eventCode, name, order, color });
+    const device = new Device({ deviceID, eventCode, name, order, color, icon });
     await device.save();
 
     return res.status(201).json({ success: true, device });
@@ -55,13 +55,13 @@ const createDevice = async (req, res) => {
 // Editar datos de un dispositivo
 const editDevice = async (req, res) => {
   const { deviceID, eventCode } = req.params;
-  const { name, color, order } = req.body;
+  const { name, color, order, icon } = req.body;
 
   try {
     // Encontrar y actualizar el dispositivo
     const updatedDevice = await Device.findOneAndUpdate(
       { deviceID, eventCode },
-      { name, color, order },
+      { name, color, order, icon },
       { new: true, runValidators: true } // Devuelve el documento actualizado y aplica validaciones
     );
 
