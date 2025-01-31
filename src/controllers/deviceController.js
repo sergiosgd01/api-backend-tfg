@@ -128,7 +128,6 @@ const getDeviceByDeviceIDEventCode = async (req, res) => {
     res.status(500).json({ message: 'Error interno del servidor.' });
   }
 };
-// .
 
 const deleteDeviceById = async (req, res) => {
   const { id } = req.params;
