@@ -50,7 +50,7 @@ const generateUniqueCode = async () => {
 };
 
 const createOrganization = async (req, res) => {
-  const { name } = req.body;
+  const { name, image } = req.body;
 
   if (!name || name.trim() === '') {
     return res.status(400).json({ message: 'El nombre es obligatorio' });
@@ -58,9 +58,9 @@ const createOrganization = async (req, res) => {
 
   try {
     const code = await generateUniqueCode();
-    const newOrganization = new Organization({ code, name });
-    await newOrganization.save();
-    res.status(201).json({ message: 'Organización creada exitosamente', organization: newOrganization });
+    const organization = new Organization({ code, name, image });
+    await organization.save();
+    res.status(201).json(organization);
   } catch (error) {
     res.status(500).json({ message: 'Error al crear la organización', error });
   }
@@ -68,7 +68,7 @@ const createOrganization = async (req, res) => {
 
 const updateOrganization = async (req, res) => {
   const { id } = req.params;
-  const { name, code } = req.body;
+  const { name, code, image } = req.body;
 
   if (!name || name.trim() === '') {
     return res.status(400).json({ message: 'El nombre es obligatorio' });
@@ -91,6 +91,10 @@ const updateOrganization = async (req, res) => {
 
     organization.name = name;
     organization.code = code;
+    if (image !== undefined) {
+      organization.image = image;
+    }
+
     await organization.save();
 
     res.status(200).json({ message: 'Organización actualizada exitosamente', organization });

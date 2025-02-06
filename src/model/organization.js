@@ -11,7 +11,8 @@ const organizationSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
-  }
+  }, 
+  image: { type: String, default: '' },
 });
 
 const Organization = mongoose.model('Organization', organizationSchema)
