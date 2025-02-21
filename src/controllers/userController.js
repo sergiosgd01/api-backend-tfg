@@ -69,37 +69,38 @@ const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
-
-    if (user) {
+    // Verifica si el correo electrónico ya está registrado
+    const userExists = await User.findOne({ email });
+    if (userExists) {
       return res.status(409).json({ success: false, message: 'El correo electrónico ya está registrado' });
     }
 
-    const newUser = new User({ username, email, password, admin: 0 });
-    await newUser.save();
+    // Cifra la contraseña antes de guardarla
+    const saltRounds = 10; // Número de rondas de cifrado
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+    // Crea un nuevo usuario con la contraseña cifrada
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword, // Guarda la contraseña cifrada
+      admin: 0,
+    });
+
+    await newUser.save();
     res.status(201).json({ success: true, user: newUser });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ success: false, message: 'Ocurrió un error al registrar el usuario' });
   }
 };
 
 const editUser = async (req, res) => {
-  const { id } = req.params; 
-  const { 
-    username, 
-    email, 
-    password,
-    admin
-  } = req.body;
+  const { id } = req.params;
+  const { username, email, password, admin } = req.body;
 
   // Verifica que todos los campos estén presentes
-  if (
-    username === undefined || 
-    email === undefined || 
-    password === undefined || 
-    admin === undefined
-  ) {
+  if (username === undefined || email === undefined || password === undefined || admin === undefined) {
     return res.status(400).json({ message: 'Todos los campos son obligatorios para actualizar el usuario.' });
   }
 
@@ -110,15 +111,18 @@ const editUser = async (req, res) => {
       return res.status(404).json({ message: 'Usuario no encontrado.' });
     }
 
+    // Cifra la nueva contraseña antes de actualizarla
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     // Actualiza los valores del usuario
     user.username = username;
     user.email = email;
-    user.password = password;
+    user.password = hashedPassword; // Guarda la contraseña cifrada
     user.admin = admin;
 
     // Guarda los cambios
     await user.save();
-
     res.status(200).json({ message: 'Usuario actualizado exitosamente.', user });
   } catch (error) {
     console.error("Error al actualizar el usuario:", error);
