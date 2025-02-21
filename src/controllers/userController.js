@@ -2,6 +2,20 @@ const User = require('../model/user')
 const jwt = require('jsonwebtoken'); // Instala jsonwebtoken con npm install jsonwebtoken
 const bcrypt = require('bcrypt'); // Instala bcrypt con npm install bcrypt
 
+const getCurrentUser = async (req, res) => {
+  try {
+    // El middleware de autenticación ya ha verificado el token y agregado el usuario al objeto `req`
+    const user = await User.findById(req.user.userId).select('-password'); // Excluye la contraseña
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado.' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error al obtener los datos del usuario:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+  }
+};
+
 const getUsers = async (req, res) => {
   try {
     const users = await User.find({});
@@ -28,34 +42,30 @@ const getUserById = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-  const { email, password } = req.body; // Cambia a req.body para recibir los datos del cuerpo de la solicitud
+  const { email, password } = req.body; // Recibe los datos del cuerpo de la solicitud
   try {
     const user = await User.findOne({ email });
-
     if (!user) {
       return res.status(401).json({ success: false, message: 'Credenciales incorrectas' });
     }
-
     // Verifica la contraseña cifrada
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ success: false, message: 'Credenciales incorrectas' });
     }
-
     // Genera un token JWT
     const token = jwt.sign(
       { userId: user._id, email: user.email }, // Datos que quieres incluir en el token
       process.env.JWT_SECRET, // Clave secreta para firmar el token
       { expiresIn: '2h' } // Tiempo de expiración del token
     );
-
     // Devuelve el token y los datos del usuario
     return res.status(200).json({
       success: true,
       token,
       user: {
         id: user._id,
-        name: user.name,
+        username: user.username, // Usa el campo "username" en lugar de "name"
         email: user.email,
       },
     });
@@ -165,6 +175,7 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
+  getCurrentUser,
   getUsers,
   getUserById,
   loginUser,
