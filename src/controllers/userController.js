@@ -1,4 +1,6 @@
 const User = require('../model/user')
+const jwt = require('jsonwebtoken'); // Instala jsonwebtoken con npm install jsonwebtoken
+const bcrypt = require('bcrypt'); // Instala bcrypt con npm install bcrypt
 
 const getUsers = async (req, res) => {
   try {
@@ -26,18 +28,40 @@ const getUserById = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-  const { email, password } = req.query;
-
+  const { email, password } = req.body; // Cambia a req.body para recibir los datos del cuerpo de la solicitud
   try {
-    const user = await User.findOne({ email, password });
-    
-    if (user) {
-      return res.status(200).json({ success: true, usuario: user });
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Credenciales incorrectas' });
     }
 
-    res.status(401).json({ success: false, message: 'Credenciales incorrectas' });
+    // Verifica la contraseña cifrada
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ success: false, message: 'Credenciales incorrectas' });
+    }
+
+    // Genera un token JWT
+    const token = jwt.sign(
+      { userId: user._id, email: user.email }, // Datos que quieres incluir en el token
+      process.env.JWT_SECRET, // Clave secreta para firmar el token
+      { expiresIn: '1h' } // Tiempo de expiración del token
+    );
+
+    // Devuelve el token y los datos del usuario
+    return res.status(200).json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Ocurrió un error al buscar el usuario' });
+    console.error(err);
+    return res.status(500).json({ success: false, message: 'Ocurrió un error al buscar el usuario' });
   }
 };
 
