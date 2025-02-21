@@ -46,7 +46,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign(
       { userId: user._id, email: user.email }, // Datos que quieres incluir en el token
       process.env.JWT_SECRET, // Clave secreta para firmar el token
-      { expiresIn: '1h' } // Tiempo de expiración del token
+      { expiresIn: '2h' } // Tiempo de expiración del token
     );
 
     // Devuelve el token y los datos del usuario
