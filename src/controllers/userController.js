@@ -126,11 +126,6 @@ const editUser = async (req, res) => {
   const { id } = req.params;
   const { username, email, password, admin } = req.body;
 
-  // Verifica que todos los campos estén presentes
-  if (username === undefined || email === undefined || password === undefined || admin === undefined) {
-    return res.status(400).json({ message: 'Todos los campos son obligatorios para actualizar el usuario.' });
-  }
-
   try {
     // Busca el usuario por ID
     const user = await User.findById(id);
@@ -138,18 +133,24 @@ const editUser = async (req, res) => {
       return res.status(404).json({ message: 'Usuario no encontrado.' });
     }
 
-    // Cifra la nueva contraseña antes de actualizarla
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    // Actualiza los valores del usuario
-    user.username = username;
-    user.email = email;
-    user.password = hashedPassword; // Guarda la contraseña cifrada
-    user.admin = admin;
+    // Actualiza solo los campos proporcionados en la solicitud
+    if (username !== undefined) {
+      user.username = username;
+    }
+    if (email !== undefined) {
+      user.email = email;
+    }
+    if (password !== undefined) {
+      const saltRounds = 10;
+      user.password = await bcrypt.hash(password, saltRounds); // Cifra la nueva contraseña
+    }
+    if (admin !== undefined) {
+      user.admin = admin;
+    }
 
     // Guarda los cambios
     await user.save();
+
     res.status(200).json({ message: 'Usuario actualizado exitosamente.', user });
   } catch (error) {
     console.error("Error al actualizar el usuario:", error);
