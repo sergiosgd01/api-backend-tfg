@@ -4,7 +4,14 @@ const userSchema = new mongoose.Schema({
   username: String,
   email: String,
   password: String,
-  admin: Number
+  isSuperAdmin: {
+    type: Boolean,
+    default: false
+  },
+  adminOf: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Organization'
+  }]
 })
 
 const User = mongoose.model('User', userSchema)

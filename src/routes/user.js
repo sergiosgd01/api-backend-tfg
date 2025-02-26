@@ -5,21 +5,23 @@ const {
   getUserById, 
   loginUser, 
   registerUser, 
+  addUser,
   editUser, 
   deleteUser 
 } = require('../controllers/userController');
 const authenticateToken = require('../middleware/authMiddleware');
 const router = express.Router();
 
-router.get('/me', authenticateToken, getCurrentUser);
-router.get('/', getUsers);
-router.get('/:id', getUserById);
-
-router.put('/:id', editUser);
-
+// Rutas públicas
 router.post('/login', loginUser);
-router.post('/', registerUser);
+router.post('/register', registerUser); // Registro público normal
 
-router.delete('/:id', deleteUser);
+// Rutas protegidas que requieren autenticación
+router.post('/add', authenticateToken, addUser); // Nueva ruta para crear usuarios con privilegios
+router.get('/me', authenticateToken, getCurrentUser);
+router.get('/', authenticateToken, getUsers);
+router.get('/:id', authenticateToken, getUserById);
+router.put('/:id', authenticateToken, editUser);
+router.delete('/:id', authenticateToken, deleteUser);
 
 module.exports = router;
