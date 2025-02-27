@@ -146,22 +146,25 @@ const addUser = async (req, res) => {
 
 const editUser = async (req, res) => {
   const { id } = req.params;
-  const { username, email, password, adminOf, isSuperAdmin } = req.body;
+  const { username, email, password, isSuperAdmin, adminOf } = req.body;
 
   try {
-    const user = await User.findById(id);
-    if (!user) {
+    // Buscar el usuario que está haciendo la petición
+    const requestingUser = await User.findById(req.user.userId);
+    if (!requestingUser) {
       return res.status(404).json({ message: 'Usuario no encontrado.' });
     }
 
-    // Verificar si es el propio usuario o un superAdmin
-    const isSelfEdit = req.user.userId === id;
-    const isSuperAdmin = req.user.isSuperAdmin;
-
-    if (!isSuperAdmin && !isSelfEdit) {
+    // Verificar que quien edita el usuario es superAdmin
+    if (!requestingUser.isSuperAdmin) {
       return res.status(403).json({ 
-        message: 'No tienes permisos para editar este usuario.' 
+        message: 'Solo los superadministradores pueden editar usuarios con privilegios.' 
       });
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado.' });
     }
 
     // Campos que cualquier usuario puede editar de sí mismo
@@ -173,13 +176,11 @@ const editUser = async (req, res) => {
     }
 
     // Campos que solo puede editar un superAdmin
-    if (isSuperAdmin) {
-      if (isSuperAdmin !== undefined) {
-        user.isSuperAdmin = isSuperAdmin;
-      }
-      if (adminOf !== undefined) {
-        user.adminOf = adminOf;
-      }
+    if (isSuperAdmin !== undefined) {
+      user.isSuperAdmin = isSuperAdmin;
+    }
+    if (adminOf !== undefined) {
+      user.adminOf = adminOf;
     }
 
     await user.save();
@@ -272,8 +273,14 @@ const deleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
+    // Buscar el usuario que está haciendo la petición
+    const requestingUser = await User.findById(req.user.userId);
+    if (!requestingUser) {
+      return res.status(404).json({ message: 'Usuario no encontrado.' });
+    }
+
     // Solo superAdmin puede eliminar usuarios
-    if (!req.user.isSuperAdmin && req.user.userId !== id) {
+    if (!requestingUser.isSuperAdmin) {
       return res.status(403).json({ message: 'No tienes permisos para eliminar este usuario.' });
     }
 
