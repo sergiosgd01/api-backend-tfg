@@ -167,6 +167,14 @@ const editUser = async (req, res) => {
       return res.status(404).json({ message: 'Usuario no encontrado.' });
     }
 
+    // Verificar si el email ya existe y pertenece a otro usuario
+    if (email !== undefined && email !== user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser && existingUser._id.toString() !== id) {
+        return res.status(400).json({ message: 'El email ya está en uso por otro usuario.' });
+      }
+    }
+
     // Campos que cualquier usuario puede editar de sí mismo
     if (username !== undefined) user.username = username;
     if (email !== undefined) user.email = email;
