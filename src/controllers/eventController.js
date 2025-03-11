@@ -86,7 +86,7 @@ const generateUniqueEventCode = async (postalCode) => {
 const createEvent = async (req, res) => {
   const { name, postalCode, time, cancelledInfo, startDate, endDate, organizationCode, multiDevice } = req.body;
 
-  if (!name || !postalCode || !time || !startDate || !endDate || !organizationCode || !multiDevice) {
+  if (!name || !postalCode || !time || !startDate || !endDate || !organizationCode) {
     return res.status(400).json({ message: 'Faltan parámetros obligatorios' });
   }
 
@@ -105,7 +105,7 @@ const createEvent = async (req, res) => {
       organizationCode,
       image: '',
       icon: '',
-      multiDevice,
+      multiDevice: multiDevice !== undefined ? multiDevice : false,
     });
 
     await newEvent.save();
