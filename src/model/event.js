@@ -16,6 +16,7 @@ const eventSchema = new mongoose.Schema({
   image: { type: String, default: '' },
   icon: { type: String, default: '' },
   organizationCode: { type: Number, required: true },
+  multiDevice: { type: Boolean, default: false },
 });
 
 const Event = mongoose.model('Event', eventSchema);

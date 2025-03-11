@@ -84,9 +84,9 @@ const generateUniqueEventCode = async (postalCode) => {
 };
 
 const createEvent = async (req, res) => {
-  const { name, postalCode, time, cancelledInfo, startDate, endDate, organizationCode } = req.body;
+  const { name, postalCode, time, cancelledInfo, startDate, endDate, organizationCode, multiDevice } = req.body;
 
-  if (!name || !postalCode || !time || !startDate || !endDate || !organizationCode) {
+  if (!name || !postalCode || !time || !startDate || !endDate || !organizationCode || !multiDevice) {
     return res.status(400).json({ message: 'Faltan parámetros obligatorios' });
   }
 
@@ -105,6 +105,7 @@ const createEvent = async (req, res) => {
       organizationCode,
       image: '',
       icon: '',
+      multiDevice,
     });
 
     await newEvent.save();
@@ -131,10 +132,11 @@ const editEvent = async (req, res) => {
     cancelledInfo, 
     startDate, 
     endDate, 
-    organizationCode 
+    organizationCode,
+    multiDevice
   } = req.body;
 
-  if (!name && !postalCode && !time && !status && !cancelledInfo && !startDate && !endDate && !organizationCode) {
+  if (!name && !postalCode && !time && !status && !cancelledInfo && !startDate && !endDate && !organizationCode && !multiDevice) {
     return res.status(400).json({ message: 'No se proporcionaron campos para actualizar.' });
   }
 
@@ -160,6 +162,7 @@ const editEvent = async (req, res) => {
     if (startDate !== undefined) event.startDate = startDate;
     if (endDate !== undefined) event.endDate = endDate;
     if (organizationCode !== undefined) event.organizationCode = organizationCode;
+    if (multiDevice !== undefined) event.multiDevice = multiDevice;
 
     await event.save();
 
@@ -172,6 +175,7 @@ const editEvent = async (req, res) => {
     res.status(500).json({ message: 'Error al actualizar el evento', error });
   }
 };
+
 const changeStatusEvent = async (req, res) => {
   const { eventCode } = req.params;
   const { action, cancelledInfo } = req.body;

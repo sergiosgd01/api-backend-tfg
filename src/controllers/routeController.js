@@ -1,4 +1,5 @@
 const Route = require('../model/route'); 
+const Event = require('../model/event');
 
 const getRouteByEventCode = async (req, res) => {
   const code = Number(req.params.code);
@@ -47,6 +48,54 @@ const getRouteByEventCodeDeviceID = async (req, res) => {
   }
 };
 
+const createRoutePoint = async (req, res) => {
+  const { code, latitude, longitude } = req.body;
+  let { deviceID } = req.body;
+
+  if (!code || !latitude || !longitude) {
+    return res.status(400).json({ message: 'Faltan datos obligatorios para insertar el punto de la ruta.' });
+  }
+
+  try {
+    // Check if event exists and if it's multiDevice
+    const event = await Event.findOne({ code });
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Evento no encontrado.' });
+    }
+    
+    // If event is multiDevice, deviceID is required
+    if (event.multiDevice && !deviceID) {
+      return res.status(400).json({ 
+        message: 'Se requiere deviceID para eventos con múltiples dispositivos.' 
+      });
+    }
+    
+    // For non-multiDevice events, deviceID should be null
+    if (!event.multiDevice) {
+      deviceID = null;
+    }
+
+    const route = new Route({
+      code,
+      latitude,
+      longitude,
+      visited: false,
+      deviceID: event.multiDevice ? deviceID : null
+    });
+
+    await route.save();
+
+    res.status(201).json({
+      success: true,
+      route: route
+    });
+  } catch (error) {
+    console.error('Error al crear el punto de la ruta:', error);
+    res.status(500).json({ message: 'Error interno del servidor.' });
+  }
+};
+
 const deleteRoutePoint = async (req, res) => {
   const id = req.params.id;
 
@@ -64,52 +113,51 @@ const deleteRoutePoint = async (req, res) => {
   }
 };
 
-const createRoutePoint = async (req, res) => {
-  const { code, latitude, longitude, deviceID } = req.body;
-
-  if (!code || !latitude || !longitude || !deviceID) {
-    return res.status(400).json({ message: 'Faltan datos obligatorios para insertar el punto de la ruta.' });
+const deleteAllRoutes = async (req, res) => {
+  const { eventCode, deviceID } = req.query;
+  
+  if (!eventCode) {
+    return res.status(400).json({ message: 'El código del evento es obligatorio.' });
   }
 
+  const numericEventCode = Number(eventCode);
+  
   try {
-    const route = new Route({
-      code,
-      latitude,
-      longitude,
-      visited: false,
-      deviceID 
-    });
+    // Check if event exists and if it's multiDevice
+    const event = await Event.findOne({ code: numericEventCode });
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Evento no encontrado.' });
+    }
+    
+    // If event is multiDevice and no deviceID provided, return error
+    if (event.multiDevice && !deviceID) {
+      return res.status(400).json({ 
+        message: 'Se requiere deviceID para eliminar rutas de eventos con múltiples dispositivos.' 
+      });
+    }
+    
+    console.log(`Eliminando rutas para el evento con código: ${numericEventCode}${deviceID ? ` y dispositivo: ${deviceID}` : ''}`);
 
-    await route.save();
-
-    res.status(201).json(route);
-  } catch (error) {
-    console.error('Error al crear el punto de la ruta:', error);
-    res.status(500).json({ message: 'Error interno del servidor.' });
-  }
-};
-
-const deleteRoutesByEventCodeDeviceID = async (req, res) => {
-  const code = Number(req.params.code);
-  const deviceID = req.params.deviceID;
-
-  try {
-    console.log(`Eliminando todas las rutas para el evento con código: ${code} y deviceID: ${deviceID}`);
-
-    const result = await Route.deleteMany({ code, deviceID });
+    // Prepare query based on whether deviceID is provided and if event is multiDevice
+    const query = (event.multiDevice && deviceID) ? 
+      { code: numericEventCode, deviceID } : 
+      { code: numericEventCode };
+    
+    const result = await Route.deleteMany(query);
 
     if (result.deletedCount === 0) {
       return res.status(404).json({
-        message: 'No se encontraron rutas para este evento y deviceID.',
+        message: 'No se encontraron rutas para eliminar.',
       });
     }
 
     res.status(200).json({
       success: true,
-      message: `Se eliminaron ${result.deletedCount} rutas del evento con código: ${code} y deviceID: ${deviceID}.`,
+      message: `Se eliminaron ${result.deletedCount} rutas${deviceID ? ` del dispositivo ${deviceID}` : ''} en el evento con código: ${numericEventCode}.`,
     });
   } catch (error) {
-    console.error('Error al eliminar las rutas por código de evento y deviceID:', error);
+    console.error('Error al eliminar las rutas:', error);
     res.status(500).json({ message: 'Error interno del servidor.' });
   }
 };
@@ -159,7 +207,7 @@ module.exports = {
   getRouteByEventCodeDeviceID,
   deleteRoutePoint,
   createRoutePoint,
-  deleteRoutesByEventCodeDeviceID,
+  deleteAllRoutes,
   updateVisitedStatus,
   resetVisitedStatusByEventCode,
 };

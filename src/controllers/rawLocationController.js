@@ -1,11 +1,36 @@
 const RawLocation = require('../model/rawLocation');
 const Location = require('../model/location');
 const EventControl = require('../model/eventControl');
+const Event = require('../model/event');
 
 const insertRawLocation = async (req, res) => {
-  const { location, code, deviceID } = req.body; // Ahora incluimos deviceID en el cuerpo de la solicitud
+  const { location, code } = req.body;
+  let { deviceID } = req.body;
+
+  if (!code) {
+    return res.status(400).json({ message: 'El código del evento es obligatorio.' });
+  }
 
   try {
+    // Verificar si el evento existe y si es multiDevice
+    const event = await Event.findOne({ code });
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Evento no encontrado.' });
+    }
+    
+    // Si es multiDevice, deviceID es requerido
+    if (event.multiDevice && !deviceID) {
+      return res.status(400).json({ 
+        message: 'Se requiere deviceID para eventos con múltiples dispositivos.' 
+      });
+    }
+    
+    // Para eventos no multiDevice, deviceID debe ser null
+    if (!event.multiDevice) {
+      deviceID = null;
+    }
+
     console.log("Nueva ubicación recibida:", location);
 
     // Obtener la configuración del evento para determinar el valor de accuracy permitido
@@ -21,7 +46,7 @@ const insertRawLocation = async (req, res) => {
       const newRawLocation = new RawLocation({
         ...location,
         code,
-        deviceID, // Agregamos el campo deviceID
+        deviceID: event.multiDevice ? deviceID : null,
         reason: "La ubicación no es precisa.",
         errorCode: 2, // Baja precisión
         processed: true,
@@ -36,11 +61,18 @@ const insertRawLocation = async (req, res) => {
     }
 
     // Busca la última ubicación antes de insertar la nueva
-    const lastRawLocation = await RawLocation.findOne({ code, deviceID }).sort({ timestamp: -1 });
+    // Ajustar la consulta según si es multiDevice o no
+    const query = event.multiDevice ? { code, deviceID } : { code };
+    const lastRawLocation = await RawLocation.findOne(query).sort({ timestamp: -1 });
     console.log("Última ubicación sin procesar encontrada:", lastRawLocation);
 
     // Inserta la nueva ubicación en RawLocation
-    const newRawLocation = new RawLocation({ ...location, code, deviceID, reason: null });
+    const newRawLocation = new RawLocation({ 
+      ...location, 
+      code, 
+      deviceID: event.multiDevice ? deviceID : null, 
+      reason: null 
+    });
     await newRawLocation.save();
 
     // Verifica si la nueva ubicación es válida para insertar en Location
@@ -58,7 +90,7 @@ const insertRawLocation = async (req, res) => {
         accuracy: location.accuracy,
         timestamp: location.timestamp,
         code,
-        deviceID, // Agregamos el campo deviceID
+        deviceID: event.multiDevice ? deviceID : null,
       });
 
       await newLocation.save();

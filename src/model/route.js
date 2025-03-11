@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const routeSchema = new mongoose.Schema({
   code: Number,
-  deviceID: { type: String, required: true, index: true },
+  deviceID: { type: String, required: false, index: true },
   latitude: Number,
   longitude: Number,
   visited: {

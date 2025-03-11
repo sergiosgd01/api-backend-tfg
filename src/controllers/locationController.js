@@ -1,4 +1,5 @@
 const Location = require('../model/location'); 
+const Event = require('../model/event');
 
 const getLocationByEventCode = async (req, res) => {
   const code = Number(req.params.code);
@@ -45,11 +46,40 @@ const getLocationsByEventCodeDeviceID = async (req, res) => {
 };
 
 const insertLocation = async (req, res) => {
-  const { location, code, deviceID } = req.body;
+  const { location, code } = req.body;
+  let { deviceID } = req.body;
+
+  if (!code) {
+    return res.status(400).json({ message: 'El código del evento es obligatorio.' });
+  }
 
   try {
-    // Registrar la ubicación
-    const newLocation = new Location({ ...location, code, deviceID });
+    // Check if event exists and if it's multiDevice
+    const event = await Event.findOne({ code });
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Evento no encontrado.' });
+    }
+    
+    // If event is multiDevice, deviceID is required
+    if (event.multiDevice && !deviceID) {
+      return res.status(400).json({ 
+        message: 'Se requiere deviceID para eventos con múltiples dispositivos.' 
+      });
+    }
+    
+    // For non-multiDevice events, deviceID should be null
+    if (!event.multiDevice) {
+      deviceID = null;
+    }
+
+    // Register the location
+    const newLocation = new Location({ 
+      ...location, 
+      code, 
+      deviceID: event.multiDevice ? deviceID : null 
+    });
+    
     await newLocation.save();
 
     res.status(201).json({ success: true, location: newLocation });
@@ -76,27 +106,51 @@ const deleteLocation = async (req, res) => {
   }
 };
 
-const deleteLocationsByDeviceAndEvent = async (req, res) => {
-  const eventCode = Number(req.params.eventCode);
-  const deviceID = req.params.deviceID;
+const deleteAllLocations = async (req, res) => {
+  const { eventCode, deviceID } = req.query;
+  
+  if (!eventCode) {
+    return res.status(400).json({ message: 'El código del evento es obligatorio.' });
+  }
 
+  const numericEventCode = Number(eventCode);
+  
   try {
-    console.log(`Eliminando todas las ubicaciones para el evento con código: ${eventCode} y dispositivo: ${deviceID}`);
+    // Check if event exists and if it's multiDevice
+    const event = await Event.findOne({ code: numericEventCode });
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Evento no encontrado.' });
+    }
+    
+    // If event is multiDevice and no deviceID provided, return error
+    if (event.multiDevice && !deviceID) {
+      return res.status(400).json({ 
+        message: 'Se requiere deviceID para eliminar ubicaciones de eventos con múltiples dispositivos.' 
+      });
+    }
+    
+    console.log(`Eliminando ubicaciones para el evento con código: ${numericEventCode}${deviceID ? ` y dispositivo: ${deviceID}` : ''}`);
 
-    const result = await Location.deleteMany({ code: eventCode, deviceID });
+    // Prepare query based on whether deviceID is provided and if event is multiDevice
+    const query = (event.multiDevice && deviceID) ? 
+      { code: numericEventCode, deviceID } : 
+      { code: numericEventCode };
+    
+    const result = await Location.deleteMany(query);
 
     if (result.deletedCount === 0) {
       return res.status(404).json({
-        message: 'No se encontraron ubicaciones para este evento y dispositivo.',
+        message: 'No se encontraron ubicaciones para eliminar.',
       });
     }
 
     res.status(200).json({
       success: true,
-      message: `Se eliminaron ${result.deletedCount} ubicaciones del dispositivo ${deviceID} en el evento con código: ${eventCode}.`,
+      message: `Se eliminaron ${result.deletedCount} ubicaciones${deviceID ? ` del dispositivo ${deviceID}` : ''} en el evento con código: ${numericEventCode}.`,
     });
   } catch (error) {
-    console.error('Error al eliminar las ubicaciones por código de evento y dispositivo:', error);
+    console.error('Error al eliminar las ubicaciones:', error);
     res.status(500).json({ message: 'Error interno del servidor.' });
   }
 };
@@ -105,40 +159,53 @@ const verifyDeviceId = async (req, res) => {
   const { deviceID, code } = req.query;
 
   try {
-    const location = await Location.findOne({ deviceID, code });
+    if (!code) {
+      return res.status(400).json({ message: 'El código del evento es obligatorio.' });
+    }
+    
+    // Check if event exists and if it's multiDevice
+    const event = await Event.findOne({ code: Number(code) });
+    
+    if (!event) {
+      return res.status(404).json({ message: 'Evento no encontrado.' });
+    }
+    
+    // For multiDevice events, deviceID is required
+    if (event.multiDevice && !deviceID) {
+      return res.status(400).json({ 
+        message: 'Se requiere deviceID para eventos con múltiples dispositivos.' 
+      });
+    }
+    
+    // For non-multiDevice events, there's no need to verify deviceID
+    if (!event.multiDevice) {
+      return res.status(200).json({ 
+        success: true, 
+        message: 'El evento no requiere verificación de deviceID.'
+      });
+    }
+    
+    const location = await Location.findOne({ deviceID, code: Number(code) });
     
     if (location) {
       return res.status(200).json({ success: true, location: location });
     }
 
-    return res.status(200).json({ success: false, message: 'No se ha encontrado ninguna ubicacion con ese deviceID' });
+    return res.status(200).json({ 
+      success: false, 
+      message: 'No se ha encontrado ninguna ubicación con ese deviceID' 
+    });
   } catch (error) {
+    console.error('Error al verificar deviceID:', error);
     res.status(500).json({ message: 'Error interno del servidor.' });
   }
 };
-
-// const getLocationDorsal = async (req, res) => {
-//   const { code, dorsal } = req.query;
-
-//   try {
-//     const location = await Location.findOne({ dorsal, code });
-
-//     if (location) {
-//       return res.status(200).json({ success: true, location: location });
-//     }
-
-//     return res.status(200).json({ success: false, message: 'No se ha encontrado ninguna ubicacion con este dorsal' });
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error interno del servidor.' });
-//   }
-// };
 
 module.exports = {
   getLocationByEventCode,
   getLocationsByEventCodeDeviceID,
   insertLocation,
   verifyDeviceId,
-  // getLocationDorsal, 
   deleteLocation,
-  deleteLocationsByDeviceAndEvent,
+  deleteAllLocations,
 };
