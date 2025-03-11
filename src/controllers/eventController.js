@@ -136,7 +136,7 @@ const editEvent = async (req, res) => {
     multiDevice
   } = req.body;
 
-  if (!name && !postalCode && !time && !status && !cancelledInfo && !startDate && !endDate && !organizationCode && !multiDevice) {
+  if (!name && !postalCode && !time && !status && !cancelledInfo && !startDate && !endDate && !organizationCode) {
     return res.status(400).json({ message: 'No se proporcionaron campos para actualizar.' });
   }
 
