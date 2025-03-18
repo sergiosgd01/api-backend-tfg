@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 require('../mongo')
 
+const healthRoutes = require('./routes/health');
 const userRoutes = require('./routes/user');
 const organizationRoutes = require('./routes/organization');
 const eventRoutes = require('./routes/event');
@@ -18,6 +19,8 @@ const app = express();
 
 app.use(cors());  
 app.use(express.json());  
+
+app.use('/api/health', healthRoutes);
 
 app.use('/api/user', userRoutes);
 
