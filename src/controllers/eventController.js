@@ -84,14 +84,25 @@ const generateUniqueEventCode = async (postalCode) => {
 };
 
 const createEvent = async (req, res) => {
-  const { name, postalCode, time, cancelledInfo, startDate, endDate, organizationCode, multiDevice } = req.body;
+  const { 
+    name, 
+    postalCode, 
+    time, 
+    cancelledInfo, 
+    startDate, 
+    endDate, 
+    organizationCode, 
+    multiDevice,
+    image,  // Añade estos dos campos
+    icon    // a la desestructuración
+  } = req.body;
 
   if (!name || !postalCode || !time || !startDate || !endDate || !organizationCode) {
     return res.status(400).json({ message: 'Faltan parámetros obligatorios' });
   }
 
   try {
-    const code = await generateUniqueEventCode(postalCode); // Generar código único
+    const code = await generateUniqueEventCode(postalCode); 
 
     const newEvent = new Event({
       code,
@@ -103,8 +114,8 @@ const createEvent = async (req, res) => {
       startDate,
       endDate,
       organizationCode,
-      image: '',
-      icon: '',
+      image: image || '',  
+      icon: icon || '',    
       multiDevice: multiDevice !== undefined ? multiDevice : false,
     });
 
@@ -124,16 +135,18 @@ const createEvent = async (req, res) => {
 
 const editEvent = async (req, res) => {
   const { eventCode } = req.params;
-  const { 
-    name, 
-    postalCode, 
-    time, 
-    status, 
-    cancelledInfo, 
-    startDate, 
-    endDate, 
+  const {
+    name,
+    postalCode,
+    time,
+    status,
+    cancelledInfo,
+    startDate,
+    endDate,
     organizationCode,
-    multiDevice
+    multiDevice,
+    image, 
+    icon    
   } = req.body;
 
   if (!name && !postalCode && !time && !status && !cancelledInfo && !startDate && !endDate && !organizationCode) {
@@ -163,6 +176,8 @@ const editEvent = async (req, res) => {
     if (endDate !== undefined) event.endDate = endDate;
     if (organizationCode !== undefined) event.organizationCode = organizationCode;
     if (multiDevice !== undefined) event.multiDevice = multiDevice;
+    if (image !== undefined) event.image = image;  
+    if (icon !== undefined) event.icon = icon;     
 
     await event.save();
 
